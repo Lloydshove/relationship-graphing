@@ -1,0 +1,20 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #fafafa;
+}
+
+h1 {
+  text-align: center;
+  padding: 20px;
+  margin: 0;
+  background: #333;
+  color: white;
+}
+
+#cy {
+  width: 100%;
+  height: calc(100vh - 80px);
+  display: block;
+}

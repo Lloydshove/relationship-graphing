@@ -22,7 +22,8 @@
     { "id": "p20", "name": "CatChing" },
     { "id": "p21", "name": "Matt" },
     { "id": "p22", "name": "Philippa" },
-    { "id": "p23", "name": "Pam" }
+    { "id": "p23", "name": "Pam" },
+    { "id": "p24", "name": "Emily" }
   ],
 
   "relationshipTypes": [
@@ -44,8 +45,8 @@
     { "id": "r3", "from": "p1", "to": "p5", "type": "rt2", "context": { "workplace": "Evolution" }, "year": null, "description": "Lloyd met Nick at work (Evolution)." },
     { "id": "r4", "from": "p6", "to": "p7", "type": "rt2", "context": { "workplace": "BGI" }, "year": null, "description": "Martin met Vicky at work (BGI)." },
 
-    { "id": "r5", "from": "p7", "to": "p8", "type": "rt3", "year": null, "description": "Vicky met Flora at school." },
-    { "id": "r6", "from": "p8", "to": "p9", "type": "rt3", "year": null, "description": "Flora met Rose at school." },
+    { "id": "r5", "from": "p7", "to": "p8", "type": "rt3", "year": 1987, "description": "Vicky met Flora at school." },
+    { "id": "r6", "from": "p8", "to": "p9", "type": "rt3", "year": 1987, "description": "Flora met Rose at school." },
 
     { "id": "r7", "from": "p5", "to": "p8", "type": "rt4", "mediator": "Harry", "year": null, "description": "Nick met Flora via Harry." },
 
@@ -61,17 +62,17 @@
       "description": "Lloyd met Jacky at Kenny and Loretta wedding."
     },
 
-    { "id": "r11", "from": "p13", "to": "p14", "type": "rt2", "context": { "workplace": "unknown" }, "year": null, "description": "Dave met Dan at work." },
+    { "id": "r11", "from": "p13", "to": "p14", "type": "rt2", "context": { "workplace": "unknown" }, "year": 2000, "description": "Dave met Dan at work." },
     { "id": "r12", "from": "p8", "to": "p14", "type": "rt4", "mediator": "Sailing", "year": null, "description": "Flora met Dan via Sailing." },
 
     { "id": "r13", "from": "p1", "to": "p15", "type": "rt8", "year": null, "description": "Lloyd met Marisa studying Mandarin." },
 
-    { "id": "r14", "from": "p16", "to": "p13", "type": "rt2", "context": { "workplace": "unknown" }, "year": null, "description": "Fran met Dave at work." },
+    { "id": "r14", "from": "p16", "to": "p13", "type": "rt2", "context": { "workplace": "unknown" }, "year": 2001, "description": "Fran met Dave at work." },
     { "id": "r15", "from": "p16", "to": "p14", "type": "rt2", "context": { "workplace": "unknown" }, "year": null, "description": "Fran met Dan at work." },
 
     { "id": "r16", "from": "p8", "to": "p10", "type": "rt5", "mediator": "Sailing", "year": null, "description": "Flora met Harry via Sailing." },
 
-    { "id": "r17", "from": "p17", "to": "p9", "type": "rt9", "year": null, "description": "Justin met Rose at accountancy college." },
+    { "id": "r17", "from": "p17", "to": "p9", "type": "rt9", "year": 2003, "description": "Justin met Rose at accountancy college." },
 
     { "id": "r18", "from": "p18", "to": "p1", "type": "rt2", "context": { "workplace": "Evolution" }, "year": null, "description": "Graeme met Lloyd at work (Evolution)." },
     { "id": "r19", "from": "p18", "to": "p19", "type": "rt1", "year": null, "description": "Graeme met Angela at university." },
@@ -106,6 +107,18 @@
 
     { "id": "r27", "from": "p22", "to": "p12", "type": "rt8", "year": null, "description": "Philippa met Sarah via learning Spanish." },
 
-    { "id": "r28", "from": "p8", "to": "p22", "type": "rt5", "mediator": "Sailing", "year": null, "description": "Flora met Philippa via Sailing." }
+    { "id": "r28", "from": "p8", "to": "p22", "type": "rt5", "mediator": "Sailing", "year": null, "description": "Flora met Philippa via Sailing." },
+
+    { "id": "r29", "from": "p9", "to": "p7", "type": "rt3", "year": 1987, "description": "Rose met Vicky at school." },
+
+    {
+      "id": "r30",
+      "from": "p17",
+      "to": "p24",
+      "type": "rt10",
+      "context": { "city": "Cayman Islands" },
+      "year": 2007,
+      "description": "Justin met Emily in the Cayman Islands."
+    }
   ]
 }

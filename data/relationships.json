@@ -48,7 +48,6 @@
     { "id": "r6", "from": "p8", "to": "p9", "type": "rt3", "description": "Flora met Rose at school." },
 
     { "id": "r7", "from": "p5", "to": "p8", "type": "rt4", "mediator": "Harry", "description": "Nick met Flora via Harry." },
-    { "id": "r8", "from": "p5", "to": "p10", "type": "rt5", "mediator": "Sailing", "description": "Nick met Harry via Sailing." },
 
     { "id": "r9", "from": "p11", "to": "p12", "type": "rt7", "description": "Therasa met Sarah at Spanish." },
 
@@ -102,6 +101,8 @@
 
     { "id": "r26", "from": "p12", "to": "p23", "type": "rt8", "description": "Sarah met Pam via learning Spanish." },
 
-    { "id": "r27", "from": "p22", "to": "p12", "type": "rt8", "description": "Philippa met Sarah via learning Spanish." }
+    { "id": "r27", "from": "p22", "to": "p12", "type": "rt8", "description": "Philippa met Sarah via learning Spanish." },
+
+    { "id": "r28", "from": "p8", "to": "p22", "type": "rt5", "mediator": "Sailing", "description": "Flora met Philippa via Sailing." }
   ]
 }

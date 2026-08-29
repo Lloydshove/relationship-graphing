@@ -3,16 +3,73 @@
 <head>
   <meta charset="UTF-8">
   <title>Relationship Graph</title>
-  <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
+  <script src="https://unpkg.com/cytoscape-louvain"></script>
 </head>
 <body class="light">
   <header>
     <h1>Relationship Graph</h1>
-    <button id="themeToggle">Toggle Dark Mode</button>
+    <button id="themeToggle">Toggle theme</button>
   </header>
 
-  <div id="cy"></div>
+  <div id="layout">
+    <aside id="sidebar">
+      <h2>Filters</h2>
+
+      <div class="filter-group">
+        <h3>Relationship type</h3>
+        <button class="filter-btn" data-type="rt1">Met at university</button>
+        <button class="filter-btn" data-type="rt2">Met at work</button>
+        <button class="filter-btn" data-type="rt3">Met at school</button>
+        <button class="filter-btn" data-type="rt4">Met via person</button>
+        <button class="filter-btn" data-type="rt5">Met via activity</button>
+        <button class="filter-btn" data-type="rt6">Met at event</button>
+        <button class="filter-btn" data-type="rt7">Met at Spanish class</button>
+        <button class="filter-btn" data-type="rt8">Met studying language</button>
+        <button class="filter-btn" data-type="rt9">Met at college</button>
+        <button class="filter-btn" data-type="rt10">Met in city</button>
+      </div>
+
+      <div class="filter-group">
+        <h3>Context</h3>
+        <button class="filter-context" data-context="workplace" data-value="Evolution">Work: Evolution</button>
+        <button class="filter-context" data-context="workplace" data-value="BGI">Work: BGI</button>
+        <button class="filter-context" data-context="workplace" data-value="unknown">Work: unknown</button>
+        <button class="filter-context" data-context="event" data-value="Kenny and Loretta wedding">Event: Kenny and Loretta wedding</button>
+        <button class="filter-context" data-context="activity" data-value="Sailing">Activity: Sailing</button>
+        <button class="filter-context" data-context="city" data-value="London">City: London</button>
+      </div>
+
+      <button id="clearFilters">Clear filters</button>
+
+      <div class="cluster-group">
+        <h3>Clustering</h3>
+        <button id="runClustering">Run clustering</button>
+        <button id="clearClustering">Clear clustering</button>
+      </div>
+    </aside>
+
+    <main id="main">
+      <div id="cy"></div>
+
+      <div id="legend">
+        <h2>Legend</h2>
+        <ul>
+          <li><span class="legend-color work"></span> Met at work</li>
+          <li><span class="legend-color university"></span> Met at university</li>
+          <li><span class="legend-color school"></span> Met at school</li>
+          <li><span class="legend-color person"></span> Met via person</li>
+          <li><span class="legend-color activity"></span> Met via activity</li>
+          <li><span class="legend-color event"></span> Met at event</li>
+          <li><span class="legend-color spanish"></span> Met at Spanish class</li>
+          <li><span class="legend-color language"></span> Met studying language</li>
+          <li><span class="legend-color college"></span> Met at college</li>
+          <li><span class="legend-color city"></span> Met in city</li>
+        </ul>
+      </div>
+    </main>
+  </div>
 
   <script src="graph.js"></script>
 </body>

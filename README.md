@@ -2,7 +2,7 @@
 
 📘 Relationship Graph — Master Specification
 
-(Fully regenerated with all updates)
+(Updated with new connections & removal of Nick–Harry Sailing)
 
 This document defines Lloyd’s extended relationship graph.
 It contains:
@@ -51,6 +51,8 @@ Update Procedure
 
 📝 2. Human‑Readable Relationship List
 
+(Updated)
+
 Core relationships
 
 • Lloyd met Kenny at university
@@ -59,7 +61,7 @@ Core relationships
 • Vicky met Flora at school
 • Flora met Rose at school
 • Nick met Flora via Harry
-• Nick met Harry via Sailing
+• Nick and Harry did not meet via Sailing — removed
 • Therasa met Sarah at Spanish
 • Lloyd met Jacky at Kenny and Loretta wedding
 • Dave met Dan at work
@@ -73,7 +75,7 @@ Core relationships
 • Graeme met Angela at university
 • Graeme met Nick at work (Evolution)
 • Jacky met CatChing in London
-• Jacky met Loretta via CatChing (kept, replaces university connection)
+• Jacky met Loretta via CatChing
 
 
 Newly added relationships
@@ -83,6 +85,7 @@ Newly added relationships
 • Philippa met Nick via Sailing
 • Sarah met Pam via learning Spanish
 • Philippa met Sarah via learning Spanish
+• Flora met Philippa via Sailing ← NEW
 
 
 ---
@@ -104,7 +107,15 @@ rt10	Met in city
 
 ---
 
-🧱 4. JSON Dataset (Fully Regenerated)
+🧱 4. JSON Dataset (Fully Updated)
+
+🔧 Changes applied:
+
+• Removed r8 (Nick ↔ Harry via Sailing)
+• Added r28 (Flora ↔ Philippa via Sailing)
+
+
+All other IDs preserved.
 
 {
   "people": [
@@ -156,7 +167,6 @@ rt10	Met in city
     { "id": "r6", "from": "p8", "to": "p9", "type": "rt3", "description": "Flora met Rose at school." },
 
     { "id": "r7", "from": "p5", "to": "p8", "type": "rt4", "mediator": "Harry", "description": "Nick met Flora via Harry." },
-    { "id": "r8", "from": "p5", "to": "p10", "type": "rt5", "mediator": "Sailing", "description": "Nick met Harry via Sailing." },
 
     { "id": "r9", "from": "p11", "to": "p12", "type": "rt7", "description": "Therasa met Sarah at Spanish." },
 
@@ -210,7 +220,10 @@ rt10	Met in city
 
     { "id": "r26", "from": "p12", "to": "p23", "type": "rt8", "description": "Sarah met Pam via learning Spanish." },
 
-    { "id": "r27", "from": "p22", "to": "p12", "type": "rt8", "description": "Philippa met Sarah via learning Spanish." }
+    { "id": "r27", "from": "p22", "to": "p12", "type": "rt8", "description": "Philippa met Sarah via learning Spanish." },
+
+    { "id": "r28", "from": "p8", "to": "p22", "type": "rt5", "mediator": "Sailing", "description": "Flora met Philippa via Sailing." }
   ]
 }
+
 

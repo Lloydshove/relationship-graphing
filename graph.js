@@ -9,7 +9,6 @@ async function loadGraph() {
     const typeObj = data.relationshipTypes.find(t => t.id === r.type);
     let label = typeObj.label;
 
-    // Human-readable label overrides
     if (r.type === 'rt4' && r.mediator) label = `Met via ${r.mediator}`;
     if (r.type === 'rt5' && r.mediator) label = `Met via ${r.mediator}`;
     if (r.type === 'rt6' && r.context?.event) label = `Met at ${r.context.event}`;
@@ -23,6 +22,7 @@ async function loadGraph() {
         label,
         mediator: r.mediator || null,
         context: r.context || null,
+        year: r.year,
         description: r.description,
         type: r.type
       }
@@ -43,7 +43,9 @@ async function loadGraph() {
           'text-halign': 'center',
           'font-size': '18px',
           'width': '80px',
-          'height': '80px'
+          'height': '80px',
+          'transition-property': 'opacity',
+          'transition-duration': '0.3s'
         }
       },
       {
@@ -57,7 +59,9 @@ async function loadGraph() {
           'curve-style': 'bezier',
           'text-background-color': '#ffffff',
           'text-background-opacity': 0.8,
-          'text-background-padding': '3px'
+          'text-background-padding': '3px',
+          'transition-property': 'opacity',
+          'transition-duration': '0.3s'
         }
       }
     ],
@@ -82,12 +86,11 @@ async function loadGraph() {
     drawer.classList.toggle('open');
   });
 
-  // Auto-close drawer after filter selection
   function closeDrawer() {
     drawer.classList.remove('open');
   }
 
-  // Hard filtering (hide non-matching edges)
+  // Hard filtering by type
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const type = btn.dataset.type;
@@ -100,6 +103,7 @@ async function loadGraph() {
     });
   });
 
+  // Hard filtering by context
   document.querySelectorAll('.filter-context').forEach(btn => {
     btn.addEventListener('click', () => {
       const key = btn.dataset.context;
@@ -119,7 +123,63 @@ async function loadGraph() {
     closeDrawer();
   });
 
-  // Clustering (Louvain)
+  // Timeline slider
+  const slider = document.getElementById('yearSlider');
+  const yearLabel = document.getElementById('yearLabel');
+
+  function applyTimeline(year) {
+    yearLabel.textContent = `Showing relationships up to: ${year}`;
+
+    cy.edges().forEach(e => {
+      const y = e.data('year');
+      if (y === null || y <= year) {
+        e.style('display', 'element');
+      } else {
+        e.style('display', 'none');
+      }
+    });
+
+    // Pulse nodes connected to newly visible edges
+    cy.edges().forEach(e => {
+      const y = e.data('year');
+      if (y === year) {
+        const src = cy.getElementById(e.data('source'));
+        const tgt = cy.getElementById(e.data('target'));
+
+        src.addClass('node-pulse');
+        tgt.addClass('node-pulse');
+
+        setTimeout(() => {
+          src.removeClass('node-pulse');
+          tgt.removeClass('node-pulse');
+        }, 600);
+      }
+    });
+  }
+
+  slider.addEventListener('input', () => {
+    applyTimeline(parseInt(slider.value));
+    closeDrawer();
+  });
+
+  // Timeline animation
+  const playBtn = document.getElementById('playTimeline');
+
+  playBtn.addEventListener('click', async () => {
+    closeDrawer();
+
+    const min = parseInt(slider.min);
+    const max = parseInt(slider.max);
+
+    for (let year = min; year <= max; year++) {
+      slider.value = year;
+      applyTimeline(year);
+
+      await new Promise(res => setTimeout(res, 400));
+    }
+  });
+
+  // Clustering
   document.getElementById('runClustering').addEventListener('click', () => {
     const louvain = cy.elements().louvain();
     const colors = ['#ffcccc', '#ccffcc', '#ccccff', '#fff0b3', '#e0ccff', '#ccf2ff'];

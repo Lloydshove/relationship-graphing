@@ -132,6 +132,7 @@ async function loadGraph() {
 
     cy.edges().forEach(e => {
       const y = e.data('year');
+
       if (y === null || y <= year) {
         e.style('display', 'element');
       } else {
@@ -158,6 +159,7 @@ async function loadGraph() {
   }
 
   slider.addEventListener('input', () => {
+    document.getElementById('clearDecade').click(); // auto-clear decade filter
     applyTimeline(parseInt(slider.value));
     closeDrawer();
   });
@@ -166,6 +168,7 @@ async function loadGraph() {
   const playBtn = document.getElementById('playTimeline');
 
   playBtn.addEventListener('click', async () => {
+    document.getElementById('clearDecade').click(); // auto-clear decade filter
     closeDrawer();
 
     const min = parseInt(slider.min);
@@ -177,6 +180,51 @@ async function loadGraph() {
 
       await new Promise(res => setTimeout(res, 400));
     }
+  });
+
+  // Decade filtering
+  function applyDecadeFilter(decadeStart) {
+    const decadeEnd = decadeStart + 9;
+
+    cy.edges().forEach(e => {
+      const y = e.data('year');
+
+      if (y !== null && y >= decadeStart && y <= decadeEnd) {
+        e.style('display', 'element');
+      } else {
+        e.style('display', 'none');
+      }
+    });
+
+    // Pulse nodes connected to visible edges
+    cy.edges().forEach(e => {
+      const y = e.data('year');
+      if (y !== null && y >= decadeStart && y <= decadeEnd) {
+        const src = cy.getElementById(e.data('source'));
+        const tgt = cy.getElementById(e.data('target'));
+
+        src.addClass('node-pulse');
+        tgt.addClass('node-pulse');
+
+        setTimeout(() => {
+          src.removeClass('node-pulse');
+          tgt.removeClass('node-pulse');
+        }, 600);
+      }
+    });
+  }
+
+  document.querySelectorAll('.decade-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const decade = parseInt(btn.dataset.decade);
+      applyDecadeFilter(decade);
+      closeDrawer();
+    });
+  });
+
+  document.getElementById('clearDecade').addEventListener('click', () => {
+    cy.edges().forEach(e => e.style('display', 'element'));
+    closeDrawer();
   });
 
   // Clustering
@@ -198,10 +246,4 @@ async function loadGraph() {
   });
 
   // Theme toggle
-  document.getElementById('themeToggle').addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-    document.body.classList.toggle('light');
-  });
-}
-
-loadGraph();
+  document.getElement

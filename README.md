@@ -2,12 +2,14 @@
 
 📘 Relationship Graph — Master Markdown File
 
-This document defines a relationship graph for Lloyd’s extended network (including friends‑of‑friends). It contains:
+(Fully regenerated with all updates)
+
+This document defines a relationship graph for Lloyd’s extended network. It contains:
 
 1. Context & update rules
 2. JSON schema
 3. Human‑readable relationship list
-4. Machine‑readable JSON dataset generated from that list
+4. Machine‑readable JSON dataset
 
 
 Future agents should follow the rules below to update the dataset whenever new English‑language relationship statements are added.
@@ -26,6 +28,9 @@ Relationship Model
 • Context fields: workplace, event, activity
 • Mediator field
 • Flat language type
+• Human‑readable relationship type labels (no underscores)
+• If met via person → label becomes “Met via ”
+• If met via activity → label becomes “Met via ”
 
 
 Directionality Rules
@@ -50,27 +55,28 @@ When new human text is added:
 
 📝 2. Human‑Readable Relationship List
 
-These are all current relationships, including the six new ones:
-
 • Lloyd met Kenny at university
 • Jacky met Loretta at university
 • Lloyd met Nick at work (Evolution)
 • Martin met Vicky at work (BGI)
 • Vicky met Flora at school
 • Flora met Rose at school
-• Nick met Flora through Harry
+• Nick met Flora via Harry
 • Nick met Harry via Sailing
 • Therasa met Sarah at Spanish
 • Lloyd met Jacky at Kenny and Loretta wedding
 • Dave met Dan at work
-• Flora met Dan through Sailing
+• Flora met Dan via Sailing
 • Lloyd met Marisa studying Mandarin
 • Fran met Dave at work
 • Fran met Dan at work
-• Flora met Harry through Sailing
+• Flora met Harry via Sailing
 • Justin met Rose at accountancy college
 • Graeme met Lloyd at work (Evolution)
 • Graeme met Angela at university
+• Graeme met Nick at work (Evolution)
+• Jacky met CatChing in London
+• Jacky met Loretta via CatChing
 
 
 ---
@@ -120,7 +126,7 @@ These are all current relationships, including the six new ones:
 
 🧱 4. Machine‑Readable JSON Dataset
 
-Below is the updated dataset with all new relationships added.
+(Fully updated with new relationships and human‑readable types)
 
 {
   "people": [
@@ -142,18 +148,19 @@ Below is the updated dataset with all new relationships added.
     { "id": "p16", "name": "Fran" },
     { "id": "p17", "name": "Justin" },
     { "id": "p18", "name": "Graeme" },
-    { "id": "p19", "name": "Angela" }
+    { "id": "p19", "name": "Angela" },
+    { "id": "p20", "name": "CatChing" }
   ],
   "relationshipTypes": [
-    { "id": "rt1", "label": "met_at_university", "description": "Two people met at university.", "subcontext": {} },
-    { "id": "rt2", "label": "met_at_work", "description": "Two people met at work.", "subcontext": { "workplace": "" } },
-    { "id": "rt3", "label": "met_at_school", "description": "Two people met at school.", "subcontext": {} },
-    { "id": "rt4", "label": "met_through_person", "description": "One person met another through a mediator.", "subcontext": {} },
-    { "id": "rt5", "label": "met_via_activity", "description": "Two people met via an activity.", "subcontext": { "activity": "" } },
-    { "id": "rt6", "label": "met_at_event", "description": "Two people met at a named event.", "subcontext": { "event": "" } },
-    { "id": "rt7", "label": "met_at_spanish_class", "description": "Two people met at Spanish class.", "subcontext": {} },
-    { "id": "rt8", "label": "met_studying_language", "description": "Two people met while studying a language.", "subcontext": { "language": "" } },
-    { "id": "rt9", "label": "met_at_college", "description": "Two people met at college.", "subcontext": {} }
+    { "id": "rt1", "label": "Met at university", "description": "Two people met at university.", "subcontext": {} },
+    { "id": "rt2", "label": "Met at work", "description": "Two people met at work.", "subcontext": { "workplace": "" } },
+    { "id": "rt3", "label": "Met at school", "description": "Two people met at school.", "subcontext": {} },
+    { "id": "rt4", "label": "Met via person", "description": "One person met another through a mediator.", "subcontext": {} },
+    { "id": "rt5", "label": "Met via activity", "description": "Two people met via an activity.", "subcontext": { "activity": "" } },
+    { "id": "rt6", "label": "Met at event", "description": "Two people met at a named event.", "subcontext": { "event": "" } },
+    { "id": "rt7", "label": "Met at Spanish class", "description": "Two people met at Spanish class.", "subcontext": {} },
+    { "id": "rt8", "label": "Met studying language", "description": "Two people met while studying a language.", "subcontext": { "language": "" } },
+    { "id": "rt9", "label": "Met at college", "description": "Two people met at college.", "subcontext": {} }
   ],
   "relationships": [
     { "id": "r1", "from": "p1", "to": "p2", "type": "rt1", "description": "Lloyd met Kenny at university." },
@@ -162,20 +169,22 @@ Below is the updated dataset with all new relationships added.
     { "id": "r4", "from": "p6", "to": "p7", "type": "rt2", "context": { "workplace": "BGI" }, "description": "Martin met Vicky at work (BGI)." },
     { "id": "r5", "from": "p7", "to": "p8", "type": "rt3", "description": "Vicky met Flora at school." },
     { "id": "r6", "from": "p8", "to": "p9", "type": "rt3", "description": "Flora met Rose at school." },
-    { "id": "r7", "from": "p5", "to": "p8", "type": "rt4", "mediator": "Harry", "description": "Nick met Flora through Harry." },
+    { "id": "r7", "from": "p5", "to": "p8", "type": "rt4", "mediator": "Harry", "description": "Nick met Flora via Harry." },
     { "id": "r8", "from": "p5", "to": "p10", "type": "rt5", "mediator": "Sailing", "description": "Nick met Harry via Sailing." },
     { "id": "r9", "from": "p11", "to": "p12", "type": "rt7", "description": "Therasa met Sarah at Spanish." },
     { "id": "r10", "from": "p1", "to": "p3", "type": "rt6", "context": { "event": "Kenny and Loretta wedding" }, "description": "Lloyd met Jacky at Kenny and Loretta wedding." },
     { "id": "r11", "from": "p13", "to": "p14", "type": "rt2", "context": { "workplace": "unknown" }, "description": "Dave met Dan at work." },
-    { "id": "r12", "from": "p8", "to": "p14", "type": "rt4", "mediator": "Sailing", "description": "Flora met Dan through Sailing." },
+    { "id": "r12", "from": "p8", "to": "p14", "type": "rt4", "mediator": "Sailing", "description": "Flora met Dan via Sailing." },
     { "id": "r13", "from": "p1", "to": "p15", "type": "rt8", "description": "Lloyd met Marisa studying Mandarin." },
-
     { "id": "r14", "from": "p16", "to": "p13", "type": "rt2", "context": { "workplace": "unknown" }, "description": "Fran met Dave at work." },
     { "id": "r15", "from": "p16", "to": "p14", "type": "rt2", "context": { "workplace": "unknown" }, "description": "Fran met Dan at work." },
-    { "id": "r16", "from": "p8", "to": "p10", "type": "rt5", "mediator": "Sailing", "description": "Flora met Harry through Sailing." },
+    { "id": "r16", "from": "p8", "to": "p10", "type": "rt5", "mediator": "Sailing", "description": "Flora met Harry via Sailing." },
     { "id": "r17", "from": "p17", "to": "p9", "type": "rt9", "description": "Justin met Rose at accountancy college." },
     { "id": "r18", "from": "p18", "to": "p1", "type": "rt2", "context": { "workplace": "Evolution" }, "description": "Graeme met Lloyd at work (Evolution)." },
-    { "id": "r19", "from": "p18", "to": "p19", "type": "rt1", "description": "Graeme met Angela at university." }
+    { "id": "r19", "from": "p18", "to": "p19", "type": "rt1", "description": "Graeme met Angela at university." },
+    { "id": "r20", "from": "p18", "to": "p5", "type": "rt2", "context": { "workplace": "Evolution" }, "description": "Graeme met Nick at work (Evolution)." },
+    { "id": "r21", "from": "p3", "to": "p20", "type": "rt9", "description": "Jacky met CatChing in London." },
+    { "id": "r22", "from": "p3", "to": "p4", "type": "rt4", "mediator": "CatChing", "description": "Jacky met Loretta via CatChing." }
   ]
 }
 

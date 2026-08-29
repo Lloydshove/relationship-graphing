@@ -21,17 +21,20 @@
     { "id": "p19", "name": "Angela" },
     { "id": "p20", "name": "CatChing" }
   ],
+
   "relationshipTypes": [
-    { "id": "rt1", "label": "Met at university", "description": "Two people met at university.", "subcontext": {} },
-    { "id": "rt2", "label": "Met at work", "description": "Two people met at work.", "subcontext": { "workplace": "" } },
-    { "id": "rt3", "label": "Met at school", "description": "Two people met at school.", "subcontext": {} },
-    { "id": "rt4", "label": "Met via person", "description": "One person met another through a mediator.", "subcontext": {} },
-    { "id": "rt5", "label": "Met via activity", "description": "Two people met via an activity.", "subcontext": { "activity": "" } },
-    { "id": "rt6", "label": "Met at event", "description": "Two people met at a named event.", "subcontext": { "event": "" } },
-    { "id": "rt7", "label": "Met at Spanish class", "description": "Two people met at Spanish class.", "subcontext": {} },
-    { "id": "rt8", "label": "Met studying language", "description": "Two people met while studying a language.", "subcontext": { "language": "" } },
-    { "id": "rt9", "label": "Met at college", "description": "Two people met at college.", "subcontext": {} }
+    { "id": "rt1", "label": "Met at university" },
+    { "id": "rt2", "label": "Met at work" },
+    { "id": "rt3", "label": "Met at school" },
+    { "id": "rt4", "label": "Met via person" },
+    { "id": "rt5", "label": "Met via activity" },
+    { "id": "rt6", "label": "Met at event" },
+    { "id": "rt7", "label": "Met at Spanish class" },
+    { "id": "rt8", "label": "Met studying language" },
+    { "id": "rt9", "label": "Met at college" },
+    { "id": "rt10", "label": "Met in city" }
   ],
+
   "relationships": [
     { "id": "r1", "from": "p1", "to": "p2", "type": "rt1", "description": "Lloyd met Kenny at university." },
     { "id": "r2", "from": "p3", "to": "p4", "type": "rt1", "description": "Jacky met Loretta at university." },
@@ -42,7 +45,14 @@
     { "id": "r7", "from": "p5", "to": "p8", "type": "rt4", "mediator": "Harry", "description": "Nick met Flora via Harry." },
     { "id": "r8", "from": "p5", "to": "p10", "type": "rt5", "mediator": "Sailing", "description": "Nick met Harry via Sailing." },
     { "id": "r9", "from": "p11", "to": "p12", "type": "rt7", "description": "Therasa met Sarah at Spanish." },
-    { "id": "r10", "from": "p1", "to": "p3", "type": "rt6", "context": { "event": "Kenny and Loretta wedding" }, "description": "Lloyd met Jacky at Kenny and Loretta wedding." },
+    {
+      "id": "r10",
+      "from": "p1",
+      "to": "p3",
+      "type": "rt6",
+      "context": { "event": "Kenny and Loretta wedding" },
+      "description": "Lloyd met Jacky at Kenny and Loretta wedding."
+    },
     { "id": "r11", "from": "p13", "to": "p14", "type": "rt2", "context": { "workplace": "unknown" }, "description": "Dave met Dan at work." },
     { "id": "r12", "from": "p8", "to": "p14", "type": "rt4", "mediator": "Sailing", "description": "Flora met Dan via Sailing." },
     { "id": "r13", "from": "p1", "to": "p15", "type": "rt8", "description": "Lloyd met Marisa studying Mandarin." },
@@ -53,7 +63,21 @@
     { "id": "r18", "from": "p18", "to": "p1", "type": "rt2", "context": { "workplace": "Evolution" }, "description": "Graeme met Lloyd at work (Evolution)." },
     { "id": "r19", "from": "p18", "to": "p19", "type": "rt1", "description": "Graeme met Angela at university." },
     { "id": "r20", "from": "p18", "to": "p5", "type": "rt2", "context": { "workplace": "Evolution" }, "description": "Graeme met Nick at work (Evolution)." },
-    { "id": "r21", "from": "p3", "to": "p20", "type": "rt9", "description": "Jacky met CatChing in London." },
-    { "id": "r22", "from": "p3", "to": "p4", "type": "rt4", "mediator": "CatChing", "description": "Jacky met Loretta via CatChing." }
+    {
+      "id": "r21",
+      "from": "p3",
+      "to": "p20",
+      "type": "rt10",
+      "context": { "city": "London" },
+      "description": "Jacky met CatChing in London."
+    },
+    {
+      "id": "r22",
+      "from": "p3",
+      "to": "p4",
+      "type": "rt4",
+      "mediator": "CatChing",
+      "description": "Jacky met Loretta via CatChing."
+    }
   ]
 }

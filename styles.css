@@ -100,6 +100,23 @@ header {
   margin-top: 10px;
 }
 
+/* Decade buttons */
+.decade-btn {
+  display: block;
+  width: 100%;
+  margin-bottom: 6px;
+  padding: 10px;
+  background: #eee;
+  border: none;
+  border-radius: 6px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.decade-btn:hover {
+  background: #ddd;
+}
+
 /* Timeline slider */
 #yearSlider {
   width: 100%;

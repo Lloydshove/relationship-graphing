@@ -81,13 +81,21 @@ async function loadGraph() {
     drawer.classList.toggle('open');
   });
 
-  // Filters
+  // Auto-close drawer after filter selection
+  function closeDrawer() {
+    drawer.classList.remove('open');
+  }
+
+  // Hard filtering (hide non-matching edges)
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const type = btn.dataset.type;
+
       cy.edges().forEach(e => {
-        e.style('opacity', e.data('type') === type ? 1 : 0.2);
+        e.style('display', e.data('type') === type ? 'element' : 'none');
       });
+
+      closeDrawer();
     });
   });
 
@@ -98,13 +106,16 @@ async function loadGraph() {
 
       cy.edges().forEach(e => {
         const ctx = e.data('context') || {};
-        e.style('opacity', ctx[key] === val ? 1 : 0.2);
+        e.style('display', ctx[key] === val ? 'element' : 'none');
       });
+
+      closeDrawer();
     });
   });
 
   document.getElementById('clearFilters').addEventListener('click', () => {
-    cy.edges().forEach(e => e.style('opacity', 1));
+    cy.edges().forEach(e => e.style('display', 'element'));
+    closeDrawer();
   });
 
   // Clustering (Louvain)
@@ -116,10 +127,13 @@ async function loadGraph() {
       const cid = louvain[n.id()];
       n.style('background-color', colors[cid % colors.length]);
     });
+
+    closeDrawer();
   });
 
   document.getElementById('clearClustering').addEventListener('click', () => {
     cy.nodes().forEach(n => n.style('background-color', '#4a90e2'));
+    closeDrawer();
   });
 
   // Theme toggle

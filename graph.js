@@ -17,6 +17,14 @@ async function loadGraph() {
       label = `Met via ${r.mediator}`;
     }
 
+    if (r.type === 'rt6' && r.context && r.context.event) {
+      label = `Met at ${r.context.event}`;
+    }
+
+    if (r.type === 'rt10' && r.context && r.context.city) {
+      label = `Met in ${r.context.city}`;
+    }
+
     return {
       data: {
         id: r.id,
@@ -60,20 +68,6 @@ async function loadGraph() {
           'text-background-color': '#ffffff',
           'text-background-opacity': 0.8,
           'text-background-padding': '3px'
-        }
-      },
-      {
-        selector: 'edge[mediator]',
-        style: {
-          'line-color': '#8e44ad',
-          'target-arrow-color': '#8e44ad'
-        }
-      },
-      {
-        selector: 'edge[context]',
-        style: {
-          'line-color': '#27ae60',
-          'target-arrow-color': '#27ae60'
         }
       }
     ],

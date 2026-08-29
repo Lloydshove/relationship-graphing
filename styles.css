@@ -1,20 +1,50 @@
 body {
-  font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background: #fafafa;
+  font-family: Arial, sans-serif;
 }
 
-h1 {
-  text-align: center;
-  padding: 20px;
-  margin: 0;
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background: #333;
   color: white;
+  padding: 10px 20px;
+}
+
+#themeToggle {
+  padding: 8px 12px;
+  background: #555;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+#themeToggle:hover {
+  background: #777;
 }
 
 #cy {
   width: 100%;
-  height: calc(100vh - 80px);
-  display: block;
+  height: calc(100vh - 60px);
+}
+
+/* LIGHT MODE */
+body.light {
+  background: #fafafa;
+}
+
+/* DARK MODE */
+body.dark {
+  background: #121212;
+}
+
+body.dark header {
+  background: #000;
+}
+
+body.dark #themeToggle {
+  background: #222;
 }

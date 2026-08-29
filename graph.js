@@ -7,7 +7,7 @@ async function loadGraph() {
 
   const edges = data.relationships.map(r => {
     const typeObj = data.relationshipTypes.find(t => t.id === r.type);
-    let label = typeObj.label;
+    let label = typeObj ? typeObj.label : '';
 
     if (r.type === 'rt4' && r.mediator) label = `Met via ${r.mediator}`;
     if (r.type === 'rt5' && r.mediator) label = `Met via ${r.mediator}`;
@@ -159,8 +159,9 @@ async function loadGraph() {
   }
 
   slider.addEventListener('input', () => {
-    document.getElementById('clearDecade').click(); // auto-clear decade filter
-    applyTimeline(parseInt(slider.value));
+    const clearDecadeBtn = document.getElementById('clearDecade');
+    if (clearDecadeBtn) clearDecadeBtn.click(); // auto-clear decade filter
+    applyTimeline(parseInt(slider.value, 10));
     closeDrawer();
   });
 
@@ -168,16 +169,16 @@ async function loadGraph() {
   const playBtn = document.getElementById('playTimeline');
 
   playBtn.addEventListener('click', async () => {
-    document.getElementById('clearDecade').click(); // auto-clear decade filter
+    const clearDecadeBtn = document.getElementById('clearDecade');
+    if (clearDecadeBtn) clearDecadeBtn.click(); // auto-clear decade filter
     closeDrawer();
 
-    const min = parseInt(slider.min);
-    const max = parseInt(slider.max);
+    const min = parseInt(slider.min, 10);
+    const max = parseInt(slider.max, 10);
 
     for (let year = min; year <= max; year++) {
       slider.value = year;
       applyTimeline(year);
-
       await new Promise(res => setTimeout(res, 400));
     }
   });
@@ -216,19 +217,23 @@ async function loadGraph() {
 
   document.querySelectorAll('.decade-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      const decade = parseInt(btn.dataset.decade);
+      const decade = parseInt(btn.dataset.decade, 10);
       applyDecadeFilter(decade);
       closeDrawer();
     });
   });
 
-  document.getElementById('clearDecade').addEventListener('click', () => {
+  const clearDecade = document.getElementById('clearDecade');
+  clearDecade.addEventListener('click', () => {
     cy.edges().forEach(e => e.style('display', 'element'));
     closeDrawer();
   });
 
   // Clustering
-  document.getElementById('runClustering').addEventListener('click', () => {
+  const runClusteringBtn = document.getElementById('runClustering');
+  const clearClusteringBtn = document.getElementById('clearClustering');
+
+  runClusteringBtn.addEventListener('click', () => {
     const louvain = cy.elements().louvain();
     const colors = ['#ffcccc', '#ccffcc', '#ccccff', '#fff0b3', '#e0ccff', '#ccf2ff'];
 
@@ -240,11 +245,17 @@ async function loadGraph() {
     closeDrawer();
   });
 
-  document.getElementById('clearClustering').addEventListener('click', () => {
+  clearClusteringBtn.addEventListener('click', () => {
     cy.nodes().forEach(n => n.style('background-color', '#4a90e2'));
     closeDrawer();
   });
 
   // Theme toggle
-  document.getElement
-  
+  const themeToggle = document.getElementById('themeToggle');
+  themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    document.body.classList.toggle('light');
+  });
+}
+
+loadGraph();

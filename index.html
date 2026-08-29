@@ -23,6 +23,17 @@
   <div id="drawer">
     <div id="drawerHandle"></div>
 
+    <!-- Timeline -->
+    <div class="drawer-section">
+      <h2>Timeline</h2>
+
+      <input type="range" id="yearSlider" min="1990" max="2026" value="2026">
+      <div id="yearLabel">Showing relationships up to: 2026</div>
+
+      <button id="playTimeline" class="play-btn">▶ Play timeline</button>
+    </div>
+
+    <!-- Filters -->
     <div class="drawer-section">
       <h2>Filters</h2>
 
@@ -53,6 +64,7 @@
       <button id="clearFilters" class="clear-btn">Clear filters</button>
     </div>
 
+    <!-- Legend -->
     <div class="drawer-section">
       <h2>Legend</h2>
       <ul id="legendList">
@@ -69,6 +81,7 @@
       </ul>
     </div>
 
+    <!-- Clustering -->
     <div class="drawer-section">
       <h2>Clustering</h2>
       <button id="runClustering">Run clustering</button>

@@ -7,16 +7,25 @@ async function loadGraph() {
 
   const edges = data.relationships.map(r => {
     const typeObj = data.relationshipTypes.find(t => t.id === r.type);
+    let label = typeObj.label;
+
+    if (r.type === 'rt4' && r.mediator) {
+      label = `Met via ${r.mediator}`;
+    }
+
+    if (r.type === 'rt5' && r.mediator) {
+      label = `Met via ${r.mediator}`;
+    }
 
     return {
       data: {
         id: r.id,
         source: r.from,
         target: r.to,
-        label: typeObj.label,        // CLEAN LABEL (Option C)
+        label,
         mediator: r.mediator || null,
         context: r.context || null,
-        description: r.description,  // FULL TEXT IN TOOLTIP
+        description: r.description,
         type: r.type
       }
     };
@@ -71,7 +80,6 @@ async function loadGraph() {
     layout: { name: 'cose', animate: true }
   });
 
-  // TOOLTIP ON EDGE CLICK
   cy.on('tap', 'edge', evt => {
     const d = evt.target.data();
     alert(
@@ -81,7 +89,6 @@ async function loadGraph() {
     );
   });
 
-  // DARK MODE TOGGLE
   const toggle = document.getElementById('themeToggle');
   toggle.addEventListener('click', () => {
     document.body.classList.toggle('dark');

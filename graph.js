@@ -9,6 +9,7 @@ async function loadGraph() {
     const typeObj = data.relationshipTypes.find(t => t.id === r.type);
     let label = typeObj.label;
 
+    // Human-readable label overrides
     if (r.type === 'rt4' && r.mediator) label = `Met via ${r.mediator}`;
     if (r.type === 'rt5' && r.mediator) label = `Met via ${r.mediator}`;
     if (r.type === 'rt6' && r.context?.event) label = `Met at ${r.context.event}`;
@@ -136,11 +137,4 @@ async function loadGraph() {
     closeDrawer();
   });
 
-  // Theme toggle
-  document.getElementById('themeToggle').addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-    document.body.classList.toggle('light');
-  });
-}
-
-loadGraph();
+  // Theme

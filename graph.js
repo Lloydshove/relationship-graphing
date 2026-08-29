@@ -5,17 +5,22 @@ async function loadGraph() {
     data: { id: p.id, label: p.name }
   }));
 
-  const edges = data.relationships.map(r => ({
-    data: {
-      id: r.id,
-      source: r.from,
-      target: r.to,
-      label: r.description,   // ← USE DESCRIPTION INSTEAD OF TYPE/ID
-      mediator: r.mediator || null,
-      context: r.context || null,
-      type: r.type
-    }
-  }));
+  const edges = data.relationships.map(r => {
+    const typeObj = data.relationshipTypes.find(t => t.id === r.type);
+
+    return {
+      data: {
+        id: r.id,
+        source: r.from,
+        target: r.to,
+        label: typeObj.label,        // CLEAN LABEL (Option C)
+        mediator: r.mediator || null,
+        context: r.context || null,
+        description: r.description,  // FULL TEXT IN TOOLTIP
+        type: r.type
+      }
+    };
+  });
 
   const cy = cytoscape({
     container: document.getElementById('cy'),
@@ -29,9 +34,9 @@ async function loadGraph() {
           'color': '#fff',
           'text-valign': 'center',
           'text-halign': 'center',
-          'font-size': '16px',
-          'width': '60px',
-          'height': '60px'
+          'font-size': '18px',
+          'width': '80px',
+          'height': '80px'
         }
       },
       {
@@ -66,10 +71,11 @@ async function loadGraph() {
     layout: { name: 'cose', animate: true }
   });
 
+  // TOOLTIP ON EDGE CLICK
   cy.on('tap', 'edge', evt => {
     const d = evt.target.data();
     alert(
-      `Relationship: ${d.label}\n\n` +
+      `Relationship: ${d.description}\n\n` +
       (d.mediator ? `Mediator: ${d.mediator}\n` : '') +
       (d.context ? `Context: ${JSON.stringify(d.context)}\n` : '')
     );
@@ -87,7 +93,7 @@ async function loadGraph() {
       .selector('node')
       .style({
         'background-color': dark ? '#1e90ff' : '#4a90e2',
-        'color': dark ? '#fff' : '#fff'
+        'color': '#fff'
       })
       .update();
 

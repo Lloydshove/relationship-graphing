@@ -100,6 +100,29 @@ header {
   margin-top: 10px;
 }
 
+/* Timeline slider */
+#yearSlider {
+  width: 100%;
+  margin: 10px 0;
+}
+
+#yearLabel {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+/* Play button */
+.play-btn {
+  background: #4a90e2;
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  width: 100%;
+  margin-top: 10px;
+  font-size: 16px;
+}
+
 /* Legend colours */
 .legend-color {
   display: inline-block;
@@ -119,6 +142,17 @@ header {
 .legend-color.language { background: #d35400; }
 .legend-color.college { background: #34495e; }
 .legend-color.city { background: #3498db; }
+
+/* Node pulse animation */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+.node-pulse {
+  animation: pulse 0.6s ease;
+}
 
 /* Dark mode */
 body.dark {

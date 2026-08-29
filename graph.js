@@ -137,4 +137,11 @@ async function loadGraph() {
     closeDrawer();
   });
 
-  // Theme
+  // Theme toggle
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    document.body.classList.toggle('light');
+  });
+}
+
+loadGraph();

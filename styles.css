@@ -31,12 +31,10 @@ header {
   height: calc(100vh - 60px);
 }
 
-/* LIGHT MODE */
 body.light {
   background: #fafafa;
 }
 
-/* DARK MODE */
 body.dark {
   background: #121212;
 }

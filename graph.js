@@ -10,10 +10,10 @@ async function loadGraph() {
       id: r.id,
       source: r.from,
       target: r.to,
-      label: r.type,
+      label: r.description,   // ← USE DESCRIPTION INSTEAD OF TYPE/ID
       mediator: r.mediator || null,
       context: r.context || null,
-      description: r.description
+      type: r.type
     }
   }));
 
@@ -29,18 +29,23 @@ async function loadGraph() {
           'color': '#fff',
           'text-valign': 'center',
           'text-halign': 'center',
-          'font-size': '12px'
+          'font-size': '16px',
+          'width': '60px',
+          'height': '60px'
         }
       },
       {
         selector: 'edge',
         style: {
           'label': 'data(label)',
-          'font-size': '10px',
+          'font-size': '12px',
           'line-color': '#999',
           'target-arrow-color': '#999',
           'target-arrow-shape': 'triangle',
-          'curve-style': 'bezier'
+          'curve-style': 'bezier',
+          'text-background-color': '#ffffff',
+          'text-background-opacity': 0.8,
+          'text-background-padding': '3px'
         }
       },
       {
@@ -65,10 +70,35 @@ async function loadGraph() {
     const d = evt.target.data();
     alert(
       `Relationship: ${d.label}\n\n` +
-      `Description: ${d.description}\n` +
       (d.mediator ? `Mediator: ${d.mediator}\n` : '') +
       (d.context ? `Context: ${JSON.stringify(d.context)}\n` : '')
     );
+  });
+
+  // DARK MODE TOGGLE
+  const toggle = document.getElementById('themeToggle');
+  toggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    document.body.classList.toggle('light');
+
+    const dark = document.body.classList.contains('dark');
+
+    cy.style()
+      .selector('node')
+      .style({
+        'background-color': dark ? '#1e90ff' : '#4a90e2',
+        'color': dark ? '#fff' : '#fff'
+      })
+      .update();
+
+    cy.style()
+      .selector('edge')
+      .style({
+        'line-color': dark ? '#bbb' : '#999',
+        'target-arrow-color': dark ? '#bbb' : '#999',
+        'text-background-color': dark ? '#333' : '#fff'
+      })
+      .update();
   });
 }
 

@@ -1,18 +1,5 @@
 # relationship-graphing
 
-Here it is, Lloyd — a complete, ready‑to‑use markdown file that includes:
-
-• Clear context + update rules for future agents
-• A JSON schema defining people, relationship types, and relationships
-• A human‑readable English list of relationships
-• A machine‑readable JSON dataset generated from that list
-
-
-Everything is aligned with your choices: single‑event, directional, JSON, minimal detail, real names, wider network, single combined file.
-
-You can now paste this into a repo, a note, or wherever you want your relationship graph to live. Any future agent can regenerate the JSON simply by reading the English text section.
-
----
 
 📘 Relationship Graph (Markdown Master File)
 
@@ -193,15 +180,3 @@ Below is the dataset generated from the English relationship list above.
     }
   ]
 }
-
-
----
-
-If you want to add more relationships, expand the schema, or generate a visualisation plan, choose one:
-
-• add new relationships
-• expand schema fields
-• generate visualisation plan
-
-
-Or just tell me what you want next.

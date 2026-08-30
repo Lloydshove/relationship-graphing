@@ -1,229 +1,119 @@
+Got it, Lloyd — here’s a professional, agent‑friendly README for your repo at relationship‑graphing.
+I’ve replaced the broken placeholders with direct GitHub links to each file in the master branch, including a new schema.md file. This way, future contributors can click straight through to the right place.
+
+---
+
+📘 Relationship Graph Project — README
+
+1. Background & Context
+
+This project was developed to map and visualise the social graph of Lloyd’s extended network.
+The aim is to capture:
+
+• Who met whom
+• How they met (school, work, activity, event, city, language study, etc.)
+• When they met (year field added for timeline analysis)
+• Contextual metadata (workplace, event, activity, city, mediator)
 
 
-📘 Relationship Graph — Master Specification
+The dataset is designed to be machine‑readable for visualisation tools (Cytoscape.js) while also being human‑readable for clarity.
 
-(Updated with new connections & removal of Nick–Harry Sailing)
+Over time, the project evolved to include:
 
-This document defines Lloyd’s extended relationship graph.
-It contains:
+• A Bottom Drawer UI for mobile‑friendly interaction
+• Filters by relationship type and context
+• Timeline slider to reveal relationships year‑by‑year
+• Animated playback with a play button
+• Decade filtering to group relationships historically
+• Clustering (Louvain algorithm) to detect communities
 
-1. Context & rules
-2. Relationship types
-3. Human‑readable relationship list
-4. Machine‑readable JSON dataset
+
+This README serves as the main guide for agents and contributors, explaining the rationale, file structure, and linking to all components.
+
+---
+
+2. File Structure
+
+project-root/
+│
+├── README.md                # Main guide (this file)
+├── schema.md                # Schema specification
+│
+├── index.html               # Main HTML file with Bottom Drawer UI
+├── styles.css               # Styling for drawer, filters, timeline, clustering
+├── graph.js                 # Cytoscape logic: rendering, filters, timeline, clustering
+│
+└── data/
+    └── relationships.json   # Full dataset of people + relationships
 
 
 ---
 
-🧭 1. Context & Update Rules
+3. Linked Files
 
-Relationship Model
-
-• Single event per relationship
-• Directed only when explicitly directional
-• Real names
-• Minimal detail
-• Context fields: workplace, event, activity, city
-• Mediator field
-• Human‑readable relationship type labels
-• If met via person → Met via 
-• If met via activity → Met via 
-• If met at event → Met at 
-• If met in city → Met in 
-
-
-Directionality
-
-• If explicitly directional → "directional": true
-• Otherwise → omit
-
-
-Update Procedure
-
-1. Parse sentence
-2. Add people if missing
-3. Add relationship type if missing
-4. Add relationship
-5. Do not modify existing IDs
+• schema.md (github.com in Bing) — defines people, relationship types, and relationships structure
+• index.html (github.com in Bing) — UI layout, drawer, slider, buttons, legend
+• styles.css (github.com in Bing) — visual styling, animations, dark mode
+• graph.js (github.com in Bing) — Cytoscape rendering, filtering, timeline, clustering logic
+• data/relationships.json (github.com in Bing) — dataset of people and relationships with year fields
 
 
 ---
 
-📝 2. Human‑Readable Relationship List
+4. Schema Overview
 
-(Updated)
+The schema defines three core entities:
 
-Core relationships
-
-• Lloyd met Kenny at university
-• Lloyd met Nick at work (Evolution)
-• Martin met Vicky at work (BGI)
-• Vicky met Flora at school
-• Flora met Rose at school
-• Nick met Flora via Harry
-• Nick and Harry did not meet via Sailing — removed
-• Therasa met Sarah at Spanish
-• Lloyd met Jacky at Kenny and Loretta wedding
-• Dave met Dan at work
-• Flora met Dan via Sailing
-• Lloyd met Marisa studying Mandarin
-• Fran met Dave at work
-• Fran met Dan at work
-• Flora met Harry via Sailing
-• Justin met Rose at accountancy college
-• Graeme met Lloyd at work (Evolution)
-• Graeme met Angela at university
-• Graeme met Nick at work (Evolution)
-• Jacky met CatChing in London
-• Jacky met Loretta via CatChing
+• People — unique IDs and names
+• RelationshipTypes — categories of how people met
+• Relationships — connections between people, with optional mediator, context, and year
 
 
-Newly added relationships
+See schema.md (github.com in Bing) for the full specification.
 
-• Matt met Nick at university
-• Matt met Harry at university
-• Philippa met Nick via Sailing
-• Sarah met Pam via learning Spanish
-• Philippa met Sarah via learning Spanish
-• Flora met Philippa via Sailing ← NEW
+---
+
+5. Key Features
+
+• Mobile‑first UI — Bottom Drawer pattern
+• Filters — by type and context
+• Timeline slider — reveal relationships up to a given year
+• Play button — animate the timeline year‑by‑year
+• Decade filtering — show only relationships from a chosen decade
+• Clustering — detect communities with Louvain algorithm
+• Pulse animation — highlight newly appearing nodes
 
 
 ---
 
-🧩 3. Relationship Types (Human‑Readable)
+6. Development Notes
 
-ID	Label	
-rt1	Met at university	
-rt2	Met at work	
-rt3	Met at school	
-rt4	Met via person	
-rt5	Met via activity	
-rt6	Met at event	
-rt7	Met at Spanish class	
-rt8	Met studying language	
-rt9	Met at college	
-rt10	Met in city	
+• Relationships are single‑event based (no multi‑event histories per edge).
+• IDs are stable (pX for people, rX for relationships, rtX for types).
+• Year field is optional (null if unknown).
+• Filtering is hard filtering (non‑matching edges hidden).
+• Drawer auto‑closes after filter/timeline actions for mobile usability.
+• Timeline animation clears decade filters before playback.
 
 
 ---
 
-🧱 4. JSON Dataset (Fully Updated)
+7. Future Extensions
 
-🔧 Changes applied:
+Potential next steps include:
 
-• Removed r8 (Nick ↔ Harry via Sailing)
-• Added r28 (Flora ↔ Philippa via Sailing)
-
-
-All other IDs preserved.
-
-{
-  "people": [
-    { "id": "p1", "name": "Lloyd" },
-    { "id": "p2", "name": "Kenny" },
-    { "id": "p3", "name": "Jacky" },
-    { "id": "p4", "name": "Loretta" },
-    { "id": "p5", "name": "Nick" },
-    { "id": "p6", "name": "Martin" },
-    { "id": "p7", "name": "Vicky" },
-    { "id": "p8", "name": "Flora" },
-    { "id": "p9", "name": "Rose" },
-    { "id": "p10", "name": "Harry" },
-    { "id": "p11", "name": "Therasa" },
-    { "id": "p12", "name": "Sarah" },
-    { "id": "p13", "name": "Dave" },
-    { "id": "p14", "name": "Dan" },
-    { "id": "p15", "name": "Marisa" },
-    { "id": "p16", "name": "Fran" },
-    { "id": "p17", "name": "Justin" },
-    { "id": "p18", "name": "Graeme" },
-    { "id": "p19", "name": "Angela" },
-    { "id": "p20", "name": "CatChing" },
-    { "id": "p21", "name": "Matt" },
-    { "id": "p22", "name": "Philippa" },
-    { "id": "p23", "name": "Pam" }
-  ],
-
-  "relationshipTypes": [
-    { "id": "rt1", "label": "Met at university" },
-    { "id": "rt2", "label": "Met at work" },
-    { "id": "rt3", "label": "Met at school" },
-    { "id": "rt4", "label": "Met via person" },
-    { "id": "rt5", "label": "Met via activity" },
-    { "id": "rt6", "label": "Met at event" },
-    { "id": "rt7", "label": "Met at Spanish class" },
-    { "id": "rt8", "label": "Met studying language" },
-    { "id": "rt9", "label": "Met at college" },
-    { "id": "rt10", "label": "Met in city" }
-  ],
-
-  "relationships": [
-    { "id": "r1", "from": "p1", "to": "p2", "type": "rt1", "description": "Lloyd met Kenny at university." },
-
-    { "id": "r3", "from": "p1", "to": "p5", "type": "rt2", "context": { "workplace": "Evolution" }, "description": "Lloyd met Nick at work (Evolution)." },
-    { "id": "r4", "from": "p6", "to": "p7", "type": "rt2", "context": { "workplace": "BGI" }, "description": "Martin met Vicky at work (BGI)." },
-
-    { "id": "r5", "from": "p7", "to": "p8", "type": "rt3", "description": "Vicky met Flora at school." },
-    { "id": "r6", "from": "p8", "to": "p9", "type": "rt3", "description": "Flora met Rose at school." },
-
-    { "id": "r7", "from": "p5", "to": "p8", "type": "rt4", "mediator": "Harry", "description": "Nick met Flora via Harry." },
-
-    { "id": "r9", "from": "p11", "to": "p12", "type": "rt7", "description": "Therasa met Sarah at Spanish." },
-
-    {
-      "id": "r10",
-      "from": "p1",
-      "to": "p3",
-      "type": "rt6",
-      "context": { "event": "Kenny and Loretta wedding" },
-      "description": "Lloyd met Jacky at Kenny and Loretta wedding."
-    },
-
-    { "id": "r11", "from": "p13", "to": "p14", "type": "rt2", "context": { "workplace": "unknown" }, "description": "Dave met Dan at work." },
-    { "id": "r12", "from": "p8", "to": "p14", "type": "rt4", "mediator": "Sailing", "description": "Flora met Dan via Sailing." },
-
-    { "id": "r13", "from": "p1", "to": "p15", "type": "rt8", "description": "Lloyd met Marisa studying Mandarin." },
-
-    { "id": "r14", "from": "p16", "to": "p13", "type": "rt2", "context": { "workplace": "unknown" }, "description": "Fran met Dave at work." },
-    { "id": "r15", "from": "p16", "to": "p14", "type": "rt2", "context": { "workplace": "unknown" }, "description": "Fran met Dan at work." },
-
-    { "id": "r16", "from": "p8", "to": "p10", "type": "rt5", "mediator": "Sailing", "description": "Flora met Harry via Sailing." },
-
-    { "id": "r17", "from": "p17", "to": "p9", "type": "rt9", "description": "Justin met Rose at accountancy college." },
-
-    { "id": "r18", "from": "p18", "to": "p1", "type": "rt2", "context": { "workplace": "Evolution" }, "description": "Graeme met Lloyd at work (Evolution)." },
-    { "id": "r19", "from": "p18", "to": "p19", "type": "rt1", "description": "Graeme met Angela at university." },
-    { "id": "r20", "from": "p18", "to": "p5", "type": "rt2", "context": { "workplace": "Evolution" }, "description": "Graeme met Nick at work (Evolution)." },
-
-    {
-      "id": "r21",
-      "from": "p3",
-      "to": "p20",
-      "type": "rt10",
-      "context": { "city": "London" },
-      "description": "Jacky met CatChing in London."
-    },
-
-    {
-      "id": "r22",
-      "from": "p3",
-      "to": "p4",
-      "type": "rt4",
-      "mediator": "CatChing",
-      "description": "Jacky met Loretta via CatChing."
-    },
-
-    { "id": "r23", "from": "p21", "to": "p5", "type": "rt1", "description": "Matt met Nick at university." },
-    { "id": "r24", "from": "p21", "to": "p10", "type": "rt1", "description": "Matt met Harry at university." },
-
-    { "id": "r25", "from": "p22", "to": "p5", "type": "rt5", "mediator": "Sailing", "description": "Philippa met Nick via Sailing." },
-
-    { "id": "r26", "from": "p12", "to": "p23", "type": "rt8", "description": "Sarah met Pam via learning Spanish." },
-
-    { "id": "r27", "from": "p22", "to": "p12", "type": "rt8", "description": "Philippa met Sarah via learning Spanish." },
-
-    { "id": "r28", "from": "p8", "to": "p22", "type": "rt5", "mediator": "Sailing", "description": "Flora met Philippa via Sailing." }
-  ]
-}
+• Decade heatmap — show density of relationships per decade
+• Story mode — narrate the timeline as it animates
+• Search bar — jump directly to a person
+• Focus mode — isolate one person and their direct connections
 
 
+---
+
+📎 Schema File
+
+See schema.md (github.com in Bing) for the full schema specification.
+
+---
+
+👉 Next step: I can generate the schema.md file content itself (with the JSON schema definition only, no dataset) so you can drop it straight into your repo. Would you like me to draft that now?

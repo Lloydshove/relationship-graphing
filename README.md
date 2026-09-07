@@ -16,6 +16,9 @@ The graph models:
 .
 ├── README.md
 ├── schema.md
+├── COPILOT_INSTRUCTIONS.md
+├── FEATURE_PLAN.md
+├── DESIGN_REVIEW_LOG.md
 ├── index.html
 ├── styles.css
 ├── graph.js
@@ -30,6 +33,9 @@ The graph models:
 - [styles.css](./styles.css) — app styling, drawer layout, and theme styles.
 - [graph.js](./graph.js) — graph loading, rendering, filtering, timeline playback, and clustering logic.
 - [data/relationships.json](./data/relationships.json) — source dataset.
+- [COPILOT_INSTRUCTIONS.md](./COPILOT_INSTRUCTIONS.md) — durable context and edit guidance for future agents.
+- [FEATURE_PLAN.md](./FEATURE_PLAN.md) — design-first roadmap for planned feature expansion.
+- [DESIGN_REVIEW_LOG.md](./DESIGN_REVIEW_LOG.md) — resumable decision log and approval gates.
 
 ## Features
 

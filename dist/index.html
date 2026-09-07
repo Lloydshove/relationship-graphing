@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Relationship Graph</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
+  <script src="https://unpkg.com/cytoscape-louvain"></script>
+</head>
+
+<body class="light">
+  <header>
+    <h1>Relationship Graph</h1>
+    <button id="themeToggle">Toggle theme</button>
+  </header>
+
+  <div id="cy"></div>
+
+  <!-- Floating button -->
+  <button id="drawerToggle">Menu</button>
+
+  <!-- Bottom drawer -->
+  <div id="drawer">
+    <div id="drawerHandle"></div>
+
+    <!-- Decade Filter -->
+    <div class="drawer-section">
+      <h2>Decade Filter</h2>
+
+      <div class="drawer-buttons">
+        <button class="decade-btn" data-decade="1980">1980s</button>
+        <button class="decade-btn" data-decade="1990">1990s</button>
+        <button class="decade-btn" data-decade="2000">2000s</button>
+        <button class="decade-btn" data-decade="2010">2010s</button>
+        <button class="decade-btn" data-decade="2020">2020s</button>
+      </div>
+
+      <button id="clearDecade" class="clear-btn">Clear decade filter</button>
+    </div>
+
+    <!-- Timeline -->
+    <div class="drawer-section">
+      <h2>Timeline</h2>
+
+      <input type="range" id="yearSlider" min="1980" max="2026" value="2026">
+      <div id="yearLabel">Showing relationships up to: 2026</div>
+
+      <button id="playTimeline" class="play-btn">▶ Play timeline</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="drawer-section">
+      <h2>Filters</h2>
+
+      <h3>Relationship type</h3>
+      <div class="drawer-buttons">
+        <button class="filter-btn" data-type="rt1">Met at university</button>
+        <button class="filter-btn" data-type="rt2">Met at work</button>
+        <button class="filter-btn" data-type="rt3">Met at school</button>
+        <button class="filter-btn" data-type="rt4">Met via person</button>
+        <button class="filter-btn" data-type="rt5">Met via activity</button>
+        <button class="filter-btn" data-type="rt6">Met at event</button>
+        <button class="filter-btn" data-type="rt7">Met at Spanish class</button>
+        <button class="filter-btn" data-type="rt8">Met studying language</button>
+        <button class="filter-btn" data-type="rt9">Met at college</button>
+        <button class="filter-btn" data-type="rt10">Met in city</button>
+      </div>
+
+      <h3>Context filters</h3>
+      <div class="drawer-buttons">
+        <button class="filter-context" data-context="workplace" data-value="Evolution">Work: Evolution</button>
+        <button class="filter-context" data-context="workplace" data-value="BGI">Work: BGI</button>
+        <button class="filter-context" data-context="workplace" data-value="unknown">Work: unknown</button>
+        <button class="filter-context" data-context="event" data-value="Kenny and Loretta wedding">Event: Kenny & Loretta wedding</button>
+        <button class="filter-context" data-context="activity" data-value="Sailing">Activity: Sailing</button>
+        <button class="filter-context" data-context="city" data-value="London">City: London</button>
+      </div>
+
+      <button id="clearFilters" class="clear-btn">Clear filters</button>
+    </div>
+
+    <!-- Legend -->
+    <div class="drawer-section">
+      <h2>Legend</h2>
+      <ul id="legendList">
+        <li><span class="legend-color work"></span> Met at work</li>
+        <li><span class="legend-color university"></span> Met at university</li>
+        <li><span class="legend-color school"></span> Met at school</li>
+        <li><span class="legend-color person"></span> Met via person</li>
+        <li><span class="legend-color activity"></span> Met via activity</li>
+        <li><span class="legend-color event"></span> Met at event</li>
+        <li><span class="legend-color spanish"></span> Met at Spanish class</li>
+        <li><span class="legend-color language"></span> Met studying language</li>
+        <li><span class="legend-color college"></span> Met at college</li>
+        <li><span class="legend-color city"></span> Met in city</li>
+      </ul>
+    </div>
+
+    <!-- Clustering -->
+    <div class="drawer-section">
+      <h2>Clustering</h2>
+      <button id="runClustering">Run clustering</button>
+      <button id="clearClustering">Clear clustering</button>
+    </div>
+  </div>
+
+  <script src="graph.js"></script>
+</body>
+</html>

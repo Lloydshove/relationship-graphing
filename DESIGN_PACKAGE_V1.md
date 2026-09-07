@@ -8,6 +8,13 @@ This package converts approved requirements into a coherent design baseline, wit
 
 Implementation remains blocked until @Lloydshove confirms this package and entries are marked in `DESIGN_REVIEW_LOG.md`.
 
+## Confirmed Decision Updates (2026-09-07)
+
+- Submission auth source: GitHub identity/session path.
+- Rollback control: version history with revert support.
+- Relationship rule: marriage may exist without dating year.
+- Country transition boundaries: infer membership end from subsequent membership.
+
 ---
 
 ## 1) Data Model V2 (Proposed)
@@ -100,6 +107,7 @@ Implementation remains blocked until @Lloydshove confirms this package and entri
 3. **Country groups**
    - Person is visible inside all active country memberships at current year.
    - Membership active when `startYear <= year` and (`endYear` is null or `endYear >= year`).
+   - When a person has sequential country memberships, `endYear` may be inferred from the next membership start.
 
 4. **Overlapping groups**
    - A person may appear in family + country (and optional meeting groups) simultaneously.
@@ -194,7 +202,5 @@ flowchart LR
 
 ## 8) Open Design Questions
 
-1. Basic auth implementation source of truth (GitHub identity vs external auth).
-2. Rollback primitive choice (versioned history vs moderation/publish controls).
-3. Marriage/dating data optionality constraints and validation policy.
-4. Country membership boundary rules when transitions overlap or are missing end years.
+1. Should dating periods be allowed to end without marriage (and if so, how represented)?
+2. Build policy finalization: strict no-build static vs optional build that outputs static assets.

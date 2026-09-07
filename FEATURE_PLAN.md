@@ -22,7 +22,7 @@ No implementation starts for any feature until design is reviewed and approved b
 ## 2) Decisions Confirmed by User (2026-09-07)
 
 1. User submission flow: **direct live updates allowed only with rollback controls**.
-2. Auth for submissions: **basic auth**.
+2. Auth for submissions: **basic auth via GitHub identity/session**.
 3. Couples: support both **dating year** and **marriage year**.
 4. Couples visualization: grouping starts at dating year, then stronger grouping at marriage year.
 5. Children: **birth-triggered visibility only**.
@@ -88,29 +88,18 @@ This keeps family/location/meeting-group features consistent and composable.
 | Unified architecture direction | Approved (concept) | User+Agent | Time-aware memberships + overlap support |
 | Family/dating/marriage model | Approved (requirements) | User+Agent | Detailed schema pending |
 | Children model and rendering | Approved (requirements) | User+Agent | Birth-only visibility |
-| Country grouping model | Approved (requirements) | User+Agent | Country-level only initially |
+| Country grouping model | Approved (requirements) | User+Agent | Country-level only initially; transition end inferred from next membership |
 | Meeting groups model | Approved (requirements) | User+Agent | Optional toggle |
 | Multi-device/stack decision | Open | User+Agent | Must preserve GitHub-friendly deployment |
-| Submission workflow + rollback | Open (partial) | User+Agent | Direct live + basic auth confirmed; rollback mechanism pending |
+| Submission workflow + rollback | Approved (requirements) | User+Agent | Direct live + GitHub basic auth + version-history rollback |
 
 ---
 
 ## 7) Remaining Clarifications Before Detailed Schema/Wireframes
 
-1. Basic auth source:
-   - GitHub identity/session,
-   - repository-stored credentials (not recommended),
-   - external auth endpoint?
-2. Rollback control model:
-   - full version history + revert,
-   - soft-delete + restore,
-   - moderation queue with publish/unpublish?
-3. Relationship semantics:
-   - can marriage exist without dating year in data?
+1. Relationship semantics:
    - can dating end without marriage?
-4. Country memberships:
-   - should end year be required when changing country, or inferred from next membership?
-5. GitHub-friendly build preference:
+2. GitHub-friendly build preference:
    - keep fully no-build static,
    - or allow build step that outputs static assets for GitHub Pages?
 

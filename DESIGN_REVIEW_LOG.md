@@ -13,7 +13,7 @@ Use this file to keep design decisions resumable across sessions.
 | 2026-09-07 | Children model | Birth-only vs staged life phases | Birth-year visibility only; smaller nodes in family | Keep initial behavior simple and time-based | @Lloydshove | No |
 | 2026-09-07 | Location membership model | City vs country vs hierarchical | Country-level only for now; transition end inferred from next membership | Limit scope for first release while keeping timeline behavior simple | @Lloydshove | Yes (design approved) |
 | 2026-09-07 | Institution groups model | Required groups vs optional | Workplaces/clubs/schools as optional toggle | Reduce clutter while preserving utility | @Lloydshove | No |
-| 2026-09-07 | Multi-device/stack direction | Static only vs build output static | Must work on GitHub without separate hosting if possible | Preserve easy deployment path | @Lloydshove | No (final build policy pending) |
+| 2026-09-07 | Multi-device/stack direction | Static only vs build output static | Use automatic GitHub build steps; output remains static-hostable artifacts | Preserve easy deployment path with CI automation | @Lloydshove | Yes (design approved) |
 | 2026-09-07 | Feature order | Mixed order | Smaller changes first; submission feature last | Risk reduction and staged rollout | @Lloydshove | Yes (planning order approved) |
 
 ## Review Gate Checklist

@@ -29,7 +29,7 @@ No implementation starts for any feature until design is reviewed and approved b
 6. Locations: **country-level only (for now)**.
 7. Multi-group model: **nested/overlapping groups required**.
 8. Meeting groups (workplace/club/school): **optional toggle**.
-9. Deployment preference: should work on GitHub with no separate hosting requirement.
+9. Deployment preference: automatic build steps are allowed, but outputs must remain GitHub-hostable static artifacts.
 10. Priority: **smaller changes first**, submission feature **last**.
 11. Design artifacts: **Mermaid diagrams included**.
 
@@ -90,7 +90,7 @@ This keeps family/location/meeting-group features consistent and composable.
 | Children model and rendering | Approved (requirements) | User+Agent | Birth-only visibility |
 | Country grouping model | Approved (requirements) | User+Agent | Country-level only initially; transition end inferred from next membership |
 | Meeting groups model | Approved (requirements) | User+Agent | Optional toggle |
-| Multi-device/stack decision | Open | User+Agent | Must preserve GitHub-friendly deployment |
+| Multi-device/stack decision | Approved (requirements) | User+Agent | Use automatic build pipeline that emits static artifacts suitable for GitHub hosting |
 | Submission workflow + rollback | Approved (requirements) | User+Agent | Direct live + GitHub basic auth + version-history rollback |
 
 ---
@@ -99,16 +99,9 @@ This keeps family/location/meeting-group features consistent and composable.
 
 1. Relationship semantics:
    - can dating end without marriage?
-2. GitHub-friendly build preference:
-   - keep fully no-build static,
-   - or allow build step that outputs static assets for GitHub Pages?
 
 ---
 
 ## 8) Next Step
 
-Produce `DESIGN_PACKAGE_V1.md` with:
-- data schema v2 draft
-- timeline/grouping behavior rules
-- Mermaid diagrams for overlapping groups and lifecycle states
-- implementation slices (small changes first, submissions last)
+Produce implementation-ready task slices from approved design decisions and keep submission feature last.

@@ -25,7 +25,7 @@ This repository is a static, browser-based relationship graph viewer built with:
 
 ## Validation Guidance
 
-- There is no build step in this repo.
+- GitHub Actions workflow `.github/workflows/build-static-artifact.yml` builds and uploads static artifacts.
 - Validate by ensuring:
   - links between files remain correct
   - JSON structure stays valid

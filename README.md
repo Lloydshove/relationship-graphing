@@ -20,6 +20,8 @@ The graph models:
 ├── FEATURE_PLAN.md
 ├── DESIGN_REVIEW_LOG.md
 ├── DESIGN_PACKAGE_V1.md
+├── .github/workflows/
+│   └── build-static-artifact.yml
 ├── index.html
 ├── styles.css
 ├── graph.js
@@ -38,6 +40,7 @@ The graph models:
 - [FEATURE_PLAN.md](./FEATURE_PLAN.md) — design-first roadmap for planned feature expansion.
 - [DESIGN_REVIEW_LOG.md](./DESIGN_REVIEW_LOG.md) — resumable decision log and approval gates.
 - [DESIGN_PACKAGE_V1.md](./DESIGN_PACKAGE_V1.md) — detailed architecture and phased design package (no implementation).
+- [.github/workflows/build-static-artifact.yml](./.github/workflows/build-static-artifact.yml) — GitHub Actions pipeline that validates data and publishes a static build artifact.
 
 ## Features
 
@@ -47,6 +50,18 @@ The graph models:
 - Decade filtering
 - Louvain community clustering
 - Light/dark theme toggle
+
+## Build Pipeline
+
+This repository includes a GitHub Actions workflow at:
+
+- [`.github/workflows/build-static-artifact.yml`](./.github/workflows/build-static-artifact.yml)
+
+The workflow:
+- runs on push, pull request, and manual trigger
+- validates `data/relationships.json`
+- assembles a static `dist/` directory
+- uploads `dist/` as an artifact named `relationship-graph-static-site`
 
 ## Data Notes
 

@@ -14,6 +14,7 @@ Implementation remains blocked until @Lloydshove confirms this package and entri
 - Rollback control: version history with revert support.
 - Relationship rule: marriage may exist without dating year.
 - Country transition boundaries: infer membership end from subsequent membership.
+- Build policy: use automatic GitHub build steps that generate static-hostable artifacts.
 
 ---
 
@@ -167,7 +168,8 @@ flowchart LR
 ### Recommended direction
 
 - Keep deployment GitHub-friendly (static assets runnable on GitHub Pages).
-- Allow optional build only if it outputs static `index.html` + JS/CSS assets with no server dependency.
+- Add GitHub Actions pipeline to build/package static site artifacts automatically.
+- Any build output must remain serverless static files (`index.html` + JS/CSS/data).
 - Prefer incremental file-structure modularization first:
   - `graph.js` split into data/model/render/control modules (still vanilla JS).
 
@@ -203,4 +205,3 @@ flowchart LR
 ## 8) Open Design Questions
 
 1. Should dating periods be allowed to end without marriage (and if so, how represented)?
-2. Build policy finalization: strict no-build static vs optional build that outputs static assets.

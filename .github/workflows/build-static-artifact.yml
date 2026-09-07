@@ -1,0 +1,37 @@
+name: Build Static Artifact
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate relationships JSON
+        run: python -m json.tool data/relationships.json > /dev/null
+
+      - name: Assemble static site artifact
+        run: |
+          mkdir -p dist
+          cp index.html dist/index.html
+          cp styles.css dist/styles.css
+          cp graph.js dist/graph.js
+          mkdir -p dist/data
+          cp data/relationships.json dist/data/relationships.json
+          cp README.md dist/README.md
+          cp schema.md dist/schema.md
+
+      - name: Upload static site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: relationship-graph-static-site
+          path: dist
+          if-no-files-found: error

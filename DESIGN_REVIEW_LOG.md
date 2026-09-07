@@ -1,0 +1,24 @@
+# Design Review Log
+
+Use this file to keep design decisions resumable across sessions.
+
+## Decision Entries
+
+| Date | Topic | Options Considered | Decision | Rationale | Approved By | Implementation Unlocked |
+|---|---|---|---|---|---|---|
+| 2026-09-07 | Submission architecture | Proposal queue vs direct live with controls | Direct live updates with rollback control; implementation last | Fast updates with safety via rollback | @Lloydshove | Yes (design approved) |
+| 2026-09-07 | Submission auth | Anonymous vs basic auth vs stronger auth | Basic auth via GitHub identity/session | Minimum control with low setup overhead | @Lloydshove | Yes (design approved) |
+| 2026-09-07 | Group rendering strategy | Layer-only vs nested/overlap support | Nested/overlapping groups | Users can be in multiple groups at once | @Lloydshove | No (detailed render spec pending) |
+| 2026-09-07 | Family model | Marriage-only vs dating+marriage milestones | Dating year + marriage year; stronger grouping at marriage; marriage may exist without dating year | Captures relationship progression over time and incomplete historical data | @Lloydshove | Yes (design approved) |
+| 2026-09-07 | Children model | Birth-only vs staged life phases | Birth-year visibility only; smaller nodes in family | Keep initial behavior simple and time-based | @Lloydshove | No |
+| 2026-09-07 | Location membership model | City vs country vs hierarchical | Country-level only for now; transition end inferred from next membership | Limit scope for first release while keeping timeline behavior simple | @Lloydshove | Yes (design approved) |
+| 2026-09-07 | Institution groups model | Required groups vs optional | Workplaces/clubs/schools as optional toggle | Reduce clutter while preserving utility | @Lloydshove | No |
+| 2026-09-07 | Multi-device/stack direction | Static only vs build output static | Use automatic GitHub build steps; output remains static-hostable artifacts | Preserve easy deployment path with CI automation | @Lloydshove | Yes (design approved) |
+| 2026-09-07 | Feature order | Mixed order | Smaller changes first; submission feature last | Risk reduction and staged rollout | @Lloydshove | Yes (planning order approved) |
+
+## Review Gate Checklist
+
+- [x] Design package reviewed by @Lloydshove (initial requirements decisions)
+- [x] Explicit approval recorded per decision
+- [ ] Implementation scope tied to approved decisions only
+- [x] Any unresolved design questions tracked before coding

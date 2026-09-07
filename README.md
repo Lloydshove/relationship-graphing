@@ -19,6 +19,7 @@ The graph models:
 ├── COPILOT_INSTRUCTIONS.md
 ├── FEATURE_PLAN.md
 ├── DESIGN_REVIEW_LOG.md
+├── DESIGN_PACKAGE_V1.md
 ├── index.html
 ├── styles.css
 ├── graph.js
@@ -36,6 +37,7 @@ The graph models:
 - [COPILOT_INSTRUCTIONS.md](./COPILOT_INSTRUCTIONS.md) — durable context and edit guidance for future agents.
 - [FEATURE_PLAN.md](./FEATURE_PLAN.md) — design-first roadmap for planned feature expansion.
 - [DESIGN_REVIEW_LOG.md](./DESIGN_REVIEW_LOG.md) — resumable decision log and approval gates.
+- [DESIGN_PACKAGE_V1.md](./DESIGN_PACKAGE_V1.md) — detailed architecture and phased design package (no implementation).
 
 ## Features
 

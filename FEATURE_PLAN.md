@@ -6,7 +6,7 @@ Create a resumable, check-in-friendly plan for expanding the graph while keeping
 
 ## Rule of Engagement
 
-No implementation starts for any feature until design is reviewed and approved by @Lloydshove.
+No implementation starts for any feature until design is reviewed and approved by @Lloydshove and captured in `DESIGN_REVIEW_LOG.md`.
 
 ---
 
@@ -15,115 +15,69 @@ No implementation starts for any feature until design is reviewed and approved b
 - Static client-side app (`index.html`, `styles.css`, `graph.js`) with Cytoscape rendering.
 - Data source is `data/relationships.json` with people, relationship types, and relationships.
 - Existing UX includes filters, timeline, decade filtering, clustering, and theme toggle.
-- Current graph model is edge-centric and does not yet model time-bounded group memberships as first-class entities.
+- Current model is edge-centric and must evolve to support time-aware overlapping groups.
 
 ---
 
-## 2) Unified Design Direction (for all requested features)
+## 2) Decisions Confirmed by User (2026-09-07)
 
-Design around a **time-aware membership model** rather than one-off feature additions:
-
-- **Entities**: people, groups, events, relationships.
-- **Groups**: family, location, workplace, club, school (same shape, different type).
-- **Memberships**: person/group links with `startYear` and optional `endYear`.
-- **Family structure**: partner relationships + children linked to family group.
-- **Timeline behavior**: nodes and memberships appear/disappear by year.
-- **Multi-group support**: one person can belong to multiple groups simultaneously.
-
-This keeps family/location/workplace/school/club features consistent and avoids duplicated logic.
-
----
-
-## 3) Feature Workstreams (Design then Implementation)
-
-### A. User-submitted graph changes (UI + moderation path)
-**Design phase**
-- Compare options: local-only drafts, file-based submissions, hosted backend/API.
-- Define trust model (anonymous vs authenticated), validation, and review workflow.
-- Define submission schema so additions work with time-aware memberships.
-
-**Implementation phase (after approval)**
-- Build chosen submission UX and processing path.
-- Add validation and conflict-handling.
-
-### B. Married couples grouped from marriage year
-**Design phase**
-- Define marriage relationship schema and family-group creation rules.
-- Define timeline behavior for pre/post marriage.
-- Define rendering style for couple grouping.
-
-**Implementation phase (after approval)**
-- Add schema fields and render family grouping by year.
-
-### C. Children as smaller nodes in family group
-**Design phase**
-- Define child entity attributes and birth-year visibility rules.
-- Define visual hierarchy within family groups.
-- Define parent/child relationship semantics and data invariants.
-
-**Implementation phase (after approval)**
-- Add child rendering, sizing, and timeline-triggered appearance.
-
-### D. Location groups with move-in/move-out years
-**Design phase**
-- Define location-group schema and membership intervals.
-- Define overlapping memberships and transitions.
-- Define display strategy when users belong to many groups at once.
-
-**Implementation phase (after approval)**
-- Add location groups and timeline-based membership transitions.
-
-### E. Multi-device UX and possible stack/file-structure evolution
-**Design phase**
-- Audit current UI and interaction patterns for desktop/tablet/mobile.
-- Decide whether to keep static stack or introduce framework/tooling.
-- Propose file-structure refactor options if staying vanilla JS.
-
-**Implementation phase (after approval)**
-- Implement responsive layout and interaction updates.
-- Apply chosen structure/tooling decision.
-
-### F. Workplaces/clubs/schools as group nodes
-**Design phase**
-- Decide whether to represent them only as relationship context or first-class groups.
-- Define compatibility with location/family groups and timeline.
-- Define visual encoding for multiple concurrent group memberships.
-
-**Implementation phase (after approval)**
-- Add group modeling and rendering consistent with unified design.
+1. User submission flow: **direct live updates allowed only with rollback controls**.
+2. Auth for submissions: **basic auth**.
+3. Couples: support both **dating year** and **marriage year**.
+4. Couples visualization: grouping starts at dating year, then stronger grouping at marriage year.
+5. Children: **birth-triggered visibility only**.
+6. Locations: **country-level only (for now)**.
+7. Multi-group model: **nested/overlapping groups required**.
+8. Meeting groups (workplace/club/school): **optional toggle**.
+9. Deployment preference: should work on GitHub with no separate hosting requirement.
+10. Priority: **smaller changes first**, submission feature **last**.
+11. Design artifacts: **Mermaid diagrams included**.
 
 ---
 
-## 4) Cross-Feature Design Decisions Required Before Build
+## 3) Unified Design Direction
 
-1. Canonical data model versioning strategy.
-2. Submission architecture choice (no backend vs hosted backend).
-3. Group rendering strategy when many memberships overlap.
-4. Timeline rules for simultaneous group memberships.
-5. Performance guardrails for expanding graph complexity.
+Design around a **time-aware membership model**:
+
+- **Entities**: people, groups, relationships, memberships.
+- **Group types**: family, country, optional meeting groups.
+- **Membership intervals**: `startYear`, optional `endYear`.
+- **Couple milestones**: dating + marriage as timeline milestones.
+- **Children**: smaller nodes, appear on birth year, linked into family grouping.
+- **Overlap support**: one person can belong to multiple groups in the same year.
+
+This keeps family/location/meeting-group features consistent and composable.
 
 ---
 
-## 5) Delivery Phases and Gates
+## 4) Implementation Ordering (Design Approved, Code Later)
 
-### Phase 0 — Discovery + Clarification (current)
-- Capture constraints, priorities, and acceptance criteria.
-- Confirm data ownership and moderation expectations.
+1. **Schema extension design + migration plan** (dating/marriage years, country memberships, child data, optional meeting groups).
+2. **Timeline/grouping behavior design** for dating vs marriage visual strength and birth-triggered child appearance.
+3. **Nested/overlapping group rendering design** (country + family coexistence).
+4. **Responsive/multi-device design and file-structure decision** (while keeping GitHub-friendly deployment).
+5. **Optional meeting-group toggle design**.
+6. **Submission system design last** (basic auth + rollback-controlled direct live updates).
 
-### Phase 1 — Architecture Design Package
-- Produce data-model proposal and UX behavior spec.
-- Include migration strategy from current JSON schema.
-- **Gate: user design review required.**
+---
 
-### Phase 2 — Per-Feature Design Specs
-- Produce feature-specific specs A–F with trade-offs.
-- Include wireframe-level interaction descriptions.
-- **Gate: user design review required per feature.**
+## 5) Design and Delivery Phases
 
-### Phase 3 — Incremental Implementation Plan
-- Break approved designs into small PR-ready steps.
-- Sequence by dependency and user priority.
-- **Gate: explicit go-ahead before coding.**
+### Phase 1 — Architecture Package
+- Data model v2 proposal.
+- Rendering and timeline rules.
+- Deployment options preserving GitHub compatibility.
+- **Gate: user review required.**
+
+### Phase 2 — Feature Design Specs (small-to-large order)
+- B/C/D/E/F detailed specs first.
+- A (submission feature) detailed spec last.
+- **Gate: user review required per spec.**
+
+### Phase 3 — Implementation Plan
+- PR-sized sequence based on approved designs.
+- Risk and rollback plan per PR.
+- **Gate: explicit implementation go-ahead required.**
 
 ---
 
@@ -131,37 +85,41 @@ This keeps family/location/workplace/school/club features consistent and avoids 
 
 | Item | Status | Owner | Notes |
 |---|---|---|---|
-| Unified architecture direction | Proposed | Agent | Pending user review |
-| Submission workflow decision | Open | User+Agent | Needs trust/moderation decision |
-| Family/marriage schema | Open | User+Agent | Pending design spec |
-| Children model and rendering | Open | User+Agent | Pending design spec |
-| Location membership intervals | Open | User+Agent | Pending design spec |
-| Multi-device/stack decision | Open | User+Agent | Needs constraints and hosting context |
-| Institution groups (work/school/club) | Open | User+Agent | Pending ontology decision |
+| Unified architecture direction | Approved (concept) | User+Agent | Time-aware memberships + overlap support |
+| Family/dating/marriage model | Approved (requirements) | User+Agent | Detailed schema pending |
+| Children model and rendering | Approved (requirements) | User+Agent | Birth-only visibility |
+| Country grouping model | Approved (requirements) | User+Agent | Country-level only initially |
+| Meeting groups model | Approved (requirements) | User+Agent | Optional toggle |
+| Multi-device/stack decision | Open | User+Agent | Must preserve GitHub-friendly deployment |
+| Submission workflow + rollback | Open (partial) | User+Agent | Direct live + basic auth confirmed; rollback mechanism pending |
 
 ---
 
-## 7) Clarifying Questions (must answer before detailed design)
+## 7) Remaining Clarifications Before Detailed Schema/Wireframes
 
-1. For user-submitted changes, do you want:
-   - a) direct edits to live graph after approval,
-   - b) proposal queue with manual merge,
-   - c) fully open edits with rollback?
-2. Do you want authentication/accounts, or anonymous submissions?
-3. Should family groups exist only after marriage, or also for long-term partners without marriage?
-4. For children, do you want hidden-until-birth behavior only, or age-stage visuals over time?
-5. For locations, are memberships city-level, country-level, or both (hierarchical)?
-6. For group overlaps, do you prefer:
-   - a) nested visual containers,
-   - b) tag/badge memberships with focus mode,
-   - c) layer toggle per group type?
-7. Should workplaces/schools/clubs be historical memberships (with start/end years) like locations?
-8. Is preserving a no-build static deployment requirement, or are you open to a framework/build step?
-9. What is priority order across features A–F?
-10. Do you want design artifacts as markdown only, or also diagram files (e.g., Mermaid in markdown)?
+1. Basic auth source:
+   - GitHub identity/session,
+   - repository-stored credentials (not recommended),
+   - external auth endpoint?
+2. Rollback control model:
+   - full version history + revert,
+   - soft-delete + restore,
+   - moderation queue with publish/unpublish?
+3. Relationship semantics:
+   - can marriage exist without dating year in data?
+   - can dating end without marriage?
+4. Country memberships:
+   - should end year be required when changing country, or inferred from next membership?
+5. GitHub-friendly build preference:
+   - keep fully no-build static,
+   - or allow build step that outputs static assets for GitHub Pages?
 
 ---
 
 ## 8) Next Step
 
-After you answer Section 7, the next check-in will be a detailed architecture/design package with explicit alternatives, trade-offs, and recommended decisions for approval before any implementation.
+Produce `DESIGN_PACKAGE_V1.md` with:
+- data schema v2 draft
+- timeline/grouping behavior rules
+- Mermaid diagrams for overlapping groups and lifecycle states
+- implementation slices (small changes first, submissions last)

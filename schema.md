@@ -3,7 +3,7 @@
 📎 Relationship Graph Schema
 
 This document defines the data schema for the Relationship Graph project.
-It specifies the structure of people, relationship types, and relationships, including optional fields for context and year.
+It specifies the structure of people, relationship types, and relationships, including optional fields for context, mediator, and year.
 
 ---
 
@@ -21,7 +21,7 @@ Relationship Types
 
 {
   "id": "string",          // unique type ID (e.g., "rt5")
-  "label": "string"        // human-readable label (e.g., "Met via activity")
+  "label": "string"        // human-readable label (e.g., "Met via activity", "Married")
 }
 
 
@@ -34,10 +34,10 @@ Relationships
 
   "from": "string",        // person ID of origin
   "to": "string",          // person ID of target
-  "type": "string",        // relationship type ID
+  "type": "string",        // relationship type ID (meeting, couple, marriage, parent-child, etc.)
 
-  "mediator": "string|null",   // optional: person or activity name
-                               // e.g., "Harry", "Sailing"
+  "mediator": "string|null",   // optional: person/activity that mediated the relationship
+                               // e.g., "Harry", "Sailing", "Matt"
 
   "context": {                 // optional contextual metadata
     "workplace": "string",     // e.g., "Evolution"
@@ -46,7 +46,7 @@ Relationships
     "city": "string"           // e.g., "London"
   },
 
-  "year": "number|null",       // optional year the relationship occurred
+  "year": "number|null",       // optional year the relationship occurred or milestone happened
                                // must be a 4-digit integer (e.g., 2018)
 
   "description": "string"      // human-readable summary of the relationship
@@ -58,13 +58,15 @@ Relationships
 
 Notes
 
-• IDs are stable and unique:• pX for people
+• IDs are stable and unique:
+• pX for people
 • rtX for relationship types
 • rX for relationships
 
 • Year field is optional. Use null if unknown.
 • Context fields are optional. Include only when relevant.
-• Mediator is optional. Used when a third party or activity facilitated the meeting.
+• Mediator is optional. Use when a third party or activity facilitated the relationship.
+• Relationship entries can represent meeting events and life milestones (e.g., becoming a couple, marriage, parent-child links).
 • Description must always be present for clarity.
 
 

@@ -23,7 +23,9 @@
     { "id": "p21", "name": "Matt" },
     { "id": "p22", "name": "Philippa" },
     { "id": "p23", "name": "Pam" },
-    { "id": "p24", "name": "Emily" }
+    { "id": "p24", "name": "Emily" },
+    { "id": "p25", "name": "Ingrid" },
+    { "id": "p26", "name": "Audrey" }
   ],
 
   "relationshipTypes": [
@@ -36,7 +38,11 @@
     { "id": "rt7", "label": "Met at Spanish class" },
     { "id": "rt8", "label": "Met studying language" },
     { "id": "rt9", "label": "Met at college" },
-    { "id": "rt10", "label": "Met in city" }
+    { "id": "rt10", "label": "Met in city" },
+    { "id": "rt11", "label": "Became a couple" },
+    { "id": "rt12", "label": "Married" },
+    { "id": "rt13", "label": "Parent of" },
+    { "id": "rt14", "label": "Met" }
   ],
 
   "relationships": [
@@ -75,7 +81,7 @@
     { "id": "r17", "from": "p17", "to": "p9", "type": "rt9", "year": 2003, "description": "Justin met Rose at accountancy college." },
 
     { "id": "r18", "from": "p18", "to": "p1", "type": "rt2", "context": { "workplace": "Evolution" }, "year": null, "description": "Graeme met Lloyd at work (Evolution)." },
-    { "id": "r19", "from": "p18", "to": "p19", "type": "rt1", "year": null, "description": "Graeme met Angela at university." },
+    { "id": "r19", "from": "p18", "to": "p19", "type": "rt14", "year": 1999, "description": "Graeme met Angela in 1999." },
     { "id": "r20", "from": "p18", "to": "p5", "type": "rt2", "context": { "workplace": "Evolution" }, "year": null, "description": "Graeme met Nick at work (Evolution)." },
 
     {
@@ -101,7 +107,7 @@
     { "id": "r23", "from": "p21", "to": "p5", "type": "rt1", "year": null, "description": "Matt met Nick at university." },
     { "id": "r24", "from": "p21", "to": "p10", "type": "rt1", "year": null, "description": "Matt met Harry at university." },
 
-    { "id": "r25", "from": "p22", "to": "p5", "type": "rt5", "mediator": "Sailing", "year": null, "description": "Philippa met Nick via Sailing." },
+    { "id": "r25", "from": "p22", "to": "p5", "type": "rt4", "mediator": "Matt", "year": 2010, "description": "Philippa met Nick via Matt." },
 
     { "id": "r26", "from": "p12", "to": "p23", "type": "rt8", "year": null, "description": "Sarah met Pam via learning Spanish." },
 
@@ -119,6 +125,23 @@
       "context": { "city": "Cayman Islands" },
       "year": 2007,
       "description": "Justin met Emily in the Cayman Islands."
-    }
+    },
+
+    { "id": "r31", "from": "p22", "to": "p21", "type": "rt5", "mediator": "Sailing", "year": 2010, "description": "Philippa met Matt via Sailing." },
+    { "id": "r32", "from": "p22", "to": "p10", "type": "rt4", "mediator": "Matt", "year": 2010, "description": "Philippa met Harry via Matt." },
+
+    { "id": "r33", "from": "p18", "to": "p19", "type": "rt11", "year": null, "description": "Graeme and Angela became a couple." },
+    { "id": "r34", "from": "p18", "to": "p19", "type": "rt12", "year": null, "description": "Graeme and Angela married (year unknown)." },
+
+    { "id": "r35", "from": "p17", "to": "p24", "type": "rt11", "year": 2007, "description": "Justin and Emily became a couple." },
+    { "id": "r36", "from": "p17", "to": "p24", "type": "rt12", "year": null, "description": "Justin and Emily married (year unknown)." },
+
+    { "id": "r37", "from": "p3", "to": "p1", "type": "rt11", "year": 2010, "description": "Jacky and Lloyd became a couple." },
+    { "id": "r38", "from": "p3", "to": "p1", "type": "rt12", "year": 2013, "description": "Jacky and Lloyd married." },
+
+    { "id": "r39", "from": "p3", "to": "p25", "type": "rt13", "year": 2014, "description": "Jacky is a parent of Ingrid." },
+    { "id": "r40", "from": "p1", "to": "p25", "type": "rt13", "year": 2014, "description": "Lloyd is a parent of Ingrid." },
+    { "id": "r41", "from": "p3", "to": "p26", "type": "rt13", "year": 2023, "description": "Jacky is a parent of Audrey." },
+    { "id": "r42", "from": "p1", "to": "p26", "type": "rt13", "year": 2023, "description": "Lloyd is a parent of Audrey." }
   ]
 }

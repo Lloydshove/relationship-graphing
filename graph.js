@@ -38,8 +38,87 @@ async function loadGraph() {
     }));
   }
 
+  function normalizeCountry(country) {
+    const raw = (country || '').trim().toLowerCase();
+    if (!raw) return 'UK';
+    if (['uk', 'u.k.', 'u.k', 'united kingdom'].includes(raw)) return 'UK';
+    if (['hong kong', 'hk', 'h.k.', 'h.k'].includes(raw)) return 'Hong Kong';
+    return country;
+  }
+
+  function hashString(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+      h = ((h << 5) - h) + str.charCodeAt(i);
+      h |= 0;
+    }
+    return Math.abs(h);
+  }
+
+  function getCountryAtYear(locationHistory, year) {
+    const fallback = 'UK';
+    if (!Array.isArray(locationHistory) || !locationHistory.length) return fallback;
+
+    const sorted = [...locationHistory].sort((a, b) => {
+      const ay = a.startYear === null ? Number.NEGATIVE_INFINITY : a.startYear;
+      const by = b.startYear === null ? Number.NEGATIVE_INFINITY : b.startYear;
+      return ay - by;
+    });
+
+    let active = sorted[0];
+
+    sorted.forEach(entry => {
+      const start = entry.startYear === null ? Number.NEGATIVE_INFINITY : entry.startYear;
+      if (start <= year) active = entry;
+    });
+
+    return normalizeCountry(active.country || fallback);
+  }
+
+  const COUNTRY_LAYOUT = {
+    'UK': {
+      id: 'location_group_uk',
+      label: 'U.K.',
+      center: { x: -340, y: 0 },
+      width: 520,
+      height: 600,
+      color: '#0ea5e9',
+      border: '#0369a1',
+      text: '#0c4a6e'
+    },
+    'Hong Kong': {
+      id: 'location_group_hong_kong',
+      label: 'Hong Kong',
+      center: { x: 340, y: 0 },
+      width: 520,
+      height: 600,
+      color: '#22d3ee',
+      border: '#0e7490',
+      text: '#164e63'
+    }
+  };
+
+  const peopleById = new Map(data.people.map(p => [p.id, p]));
+  const familyGroups = buildFamilyGroups(data.relationships);
+  const familyMembers = new Set(familyGroups.flatMap(group => group.members));
+
   const nodes = data.people.map(p => ({
-    data: { id: p.id, label: p.name }
+    data: { id: p.id, label: p.name },
+    classes: 'person'
+  }));
+
+  const locationGroups = Object.values(COUNTRY_LAYOUT).map(country => ({
+    data: {
+      id: country.id,
+      label: country.label,
+      width: country.width,
+      height: country.height,
+      bgColor: country.color,
+      borderColor: country.border,
+      textColor: country.text
+    },
+    position: { ...country.center },
+    classes: 'location-group'
   }));
 
   const edges = data.relationships.map(r => {
@@ -67,14 +146,12 @@ async function loadGraph() {
     };
   });
 
-  const familyGroups = buildFamilyGroups(data.relationships);
-
   const cy = cytoscape({
     container: document.getElementById('cy'),
-    elements: [...nodes, ...edges],
+    elements: [...locationGroups, ...nodes, ...edges],
     style: [
       {
-        selector: 'node',
+        selector: 'node.person',
         style: {
           'label': 'data(label)',
           'background-color': '#4a90e2',
@@ -86,6 +163,36 @@ async function loadGraph() {
           'height': '80px',
           'transition-property': 'opacity',
           'transition-duration': '0.3s'
+        }
+      },
+      {
+        selector: 'node.location-group',
+        style: {
+          'label': 'data(label)',
+          'shape': 'round-rectangle',
+          'width': 'data(width)',
+          'height': 'data(height)',
+          'background-color': 'data(bgColor)',
+          'background-opacity': 0.12,
+          'border-width': 3,
+          'border-style': 'solid',
+          'border-color': 'data(borderColor)',
+          'text-valign': 'top',
+          'text-halign': 'center',
+          'font-size': '18px',
+          'font-weight': 700,
+          'color': 'data(textColor)',
+          'padding': '20px',
+          'events': 'no',
+          'z-compound-depth': 'bottom'
+        }
+      },
+      {
+        selector: 'node.person.family-member',
+        style: {
+          'border-width': 4,
+          'border-color': '#db2777',
+          'border-style': 'dashed'
         }
       },
       {
@@ -146,38 +253,60 @@ async function loadGraph() {
           'target-arrow-shape': 'triangle',
           'width': 3
         }
-      },
-      {
-        selector: 'node.family-group',
-        style: {
-          'background-color': '#ec4899',
-          'background-opacity': 0.1,
-          'border-width': 2,
-          'border-style': 'dashed',
-          'border-color': '#db2777',
-          'shape': 'round-rectangle',
-          'padding': '22px',
-          'label': 'Family',
-          'text-valign': 'top',
-          'text-halign': 'center',
-          'font-size': '11px',
-          'color': '#9d174d',
-          'z-compound-depth': 'bottom',
-          'events': 'no',
-          'display': 'none'
-        }
       }
     ],
-    layout: { name: 'cose', animate: true }
+    layout: { name: 'preset' }
   });
 
-  cy.add(familyGroups.map(group => ({
-    data: { id: group.id },
-    classes: 'family-group'
-  })));
+  cy.nodes('.location-group').forEach(n => {
+    n.lock();
+    n.ungrabify();
+  });
+
+  function getLocationPosition(personId, country) {
+    const layout = COUNTRY_LAYOUT[country] || COUNTRY_LAYOUT.UK;
+    const usableWidth = layout.width - 130;
+    const usableHeight = layout.height - 160;
+
+    const xHash = hashString(`${personId}:${country}:x`) % 1000;
+    const yHash = hashString(`${personId}:${country}:y`) % 1000;
+
+    const xOffset = (xHash / 999 - 0.5) * usableWidth;
+    const yOffset = (yHash / 999 - 0.5) * usableHeight;
+
+    return {
+      x: layout.center.x + xOffset,
+      y: layout.center.y + yOffset
+    };
+  }
+
+  function applyLocationGrouping(year, options = {}) {
+    const { animate = true } = options;
+
+    cy.nodes('.person').forEach(node => {
+      const person = peopleById.get(node.id());
+      const country = getCountryAtYear(person?.locationHistory || [], year);
+      const targetPosition = getLocationPosition(node.id(), country);
+
+      node.data('country', country);
+      node.stop();
+
+      if (animate) {
+        node.animate({
+          position: targetPosition,
+          duration: 650,
+          easing: 'ease-in-out-cubic'
+        });
+      } else {
+        node.position(targetPosition);
+      }
+    });
+
+    cy.fit(cy.elements(), 30);
+  }
 
   // Center graph on clicked person
-  cy.on('tap', 'node', evt => {
+  cy.on('tap', 'node.person', evt => {
     const node = evt.target;
 
     cy.animate({
@@ -199,41 +328,27 @@ async function loadGraph() {
     drawer.classList.remove('open');
   }
 
-  function setFamilyGrouping(enabled, options = {}) {
-    const { animate = true } = options;
-
+  function setFamilyGrouping(enabled) {
     if (!familyGroups.length) return;
 
-    familyGroups.forEach(group => {
-      const groupNode = cy.getElementById(group.id);
-
-      groupNode.style('display', enabled ? 'element' : 'none');
-      group.members.forEach(memberId => {
-        const memberNode = cy.getElementById(memberId);
-        if (memberNode.nonempty()) {
-          memberNode.move({ parent: enabled ? group.id : null });
-        }
-      });
+    familyMembers.forEach(memberId => {
+      const memberNode = cy.getElementById(memberId);
+      if (memberNode.nonempty()) {
+        memberNode.toggleClass('family-member', enabled);
+      }
     });
-
-    cy.layout({
-      name: 'cose',
-      animate,
-      animationDuration: 650,
-      fit: false
-    }).run();
   }
 
   if (familyGroupingToggle) {
     familyGroupingToggle.addEventListener('change', () => {
-      setFamilyGrouping(familyGroupingToggle.checked, { animate: true });
+      setFamilyGrouping(familyGroupingToggle.checked);
       closeDrawer();
     });
 
     familyGroupingToggle.checked = true;
   }
 
-  setFamilyGrouping(true, { animate: true });
+  setFamilyGrouping(true);
 
   // Hard filtering by type
   document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -272,7 +387,9 @@ async function loadGraph() {
   const slider = document.getElementById('yearSlider');
   const yearLabel = document.getElementById('yearLabel');
 
-  function applyTimeline(year) {
+  function applyTimeline(year, options = {}) {
+    const { animateLocations = true } = options;
+
     yearLabel.textContent = `Showing relationships up to: ${year}`;
 
     cy.edges().forEach(e => {
@@ -284,6 +401,8 @@ async function loadGraph() {
         e.style('display', 'none');
       }
     });
+
+    applyLocationGrouping(year, { animate: animateLocations });
 
     // Pulse nodes connected to newly visible edges
     cy.edges().forEach(e => {
@@ -323,7 +442,7 @@ async function loadGraph() {
 
     for (let year = min; year <= max; year++) {
       slider.value = year;
-      applyTimeline(year);
+      applyTimeline(year, { animateLocations: true });
       await new Promise(res => setTimeout(res, 400));
     }
   });
@@ -379,19 +498,21 @@ async function loadGraph() {
   const clearClusteringBtn = document.getElementById('clearClustering');
 
   runClusteringBtn.addEventListener('click', () => {
-    const louvain = cy.elements().louvain();
+    const louvain = cy.elements().difference(cy.nodes('.location-group')).louvain();
     const colors = ['#ffcccc', '#ccffcc', '#ccccff', '#fff0b3', '#e0ccff', '#ccf2ff'];
 
-    cy.nodes().forEach(n => {
+    cy.nodes('.person').forEach(n => {
       const cid = louvain[n.id()];
-      n.style('background-color', colors[cid % colors.length]);
+      if (cid !== undefined) {
+        n.style('background-color', colors[cid % colors.length]);
+      }
     });
 
     closeDrawer();
   });
 
   clearClusteringBtn.addEventListener('click', () => {
-    cy.nodes().forEach(n => n.style('background-color', '#4a90e2'));
+    cy.nodes('.person').forEach(n => n.style('background-color', '#4a90e2'));
     closeDrawer();
   });
 
@@ -401,6 +522,8 @@ async function loadGraph() {
     document.body.classList.toggle('dark');
     document.body.classList.toggle('light');
   });
+
+  applyTimeline(parseInt(slider.value, 10), { animateLocations: false });
 }
 
 loadGraph();

@@ -11,7 +11,13 @@ People
 
 {
   "id": "string",          // unique person ID (e.g., "p1")
-  "name": "string"         // person's name
+  "name": "string",        // person's name
+  "locationHistory": [     // optional location timeline; country persists until next entry
+    {
+      "country": "string",     // e.g., "UK", "Hong Kong"
+      "startYear": "number|null" // first year this country applies; null means earliest known
+    }
+  ]
 }
 
 
@@ -68,6 +74,8 @@ Notes
 • Mediator is optional. Use when a third party or activity facilitated the relationship.
 • Relationship entries can represent meeting events and life milestones (e.g., becoming a couple, marriage, parent-child links).
 • Description must always be present for clarity.
+• `locationHistory` is optional on people. If present, entries should be sorted by `startYear` ascending (`null` first).
+• A person's country at a given year is the latest `locationHistory` entry whose `startYear` is less than or equal to that year.
 
 
 ---

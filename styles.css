@@ -159,6 +159,21 @@ header {
 .legend-color.language { background: #d35400; }
 .legend-color.college { background: #34495e; }
 .legend-color.city { background: #3498db; }
+.legend-color.couple { background: #f59e0b; }
+.legend-color.married { background: #c2410c; }
+.legend-color.parent { background: #16a34a; }
+.legend-color.family { background: #ec4899; }
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggle-row input {
+  width: 16px;
+  height: 16px;
+}
 
 /* Node pulse animation */
 @keyframes pulse {

@@ -162,6 +162,7 @@ header {
 .legend-color.couple { background: #f59e0b; }
 .legend-color.married { background: #c2410c; }
 .legend-color.parent { background: #16a34a; }
+.legend-color.location { background: #0ea5e9; }
 .legend-color.family { background: #ec4899; }
 
 .toggle-row {

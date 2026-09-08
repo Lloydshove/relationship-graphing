@@ -199,7 +199,11 @@ async function loadGraph() {
     drawer.classList.remove('open');
   }
 
-  function setFamilyGrouping(enabled) {
+  function setFamilyGrouping(enabled, options = {}) {
+    const { animate = true } = options;
+
+    if (!familyGroups.length) return;
+
     familyGroups.forEach(group => {
       const groupNode = cy.getElementById(group.id);
 
@@ -212,15 +216,24 @@ async function loadGraph() {
       });
     });
 
-    cy.layout({ name: 'cose', animate: true }).run();
+    cy.layout({
+      name: 'cose',
+      animate,
+      animationDuration: 650,
+      fit: false
+    }).run();
   }
 
   if (familyGroupingToggle) {
     familyGroupingToggle.addEventListener('change', () => {
-      setFamilyGrouping(familyGroupingToggle.checked);
+      setFamilyGrouping(familyGroupingToggle.checked, { animate: true });
       closeDrawer();
     });
+
+    familyGroupingToggle.checked = true;
   }
+
+  setFamilyGrouping(true, { animate: true });
 
   // Hard filtering by type
   document.querySelectorAll('.filter-btn').forEach(btn => {

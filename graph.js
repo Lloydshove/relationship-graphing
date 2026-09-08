@@ -1,6 +1,43 @@
 async function loadGraph() {
   const data = await fetch('./data/relationships.json').then(r => r.json());
 
+  function edgeClassForType(type) {
+    if (type === 'rt11') return 'edge-couple';
+    if (type === 'rt12') return 'edge-married';
+    if (type === 'rt13') return 'edge-parent';
+    return 'edge-meeting';
+  }
+
+  function buildFamilyGroups(relationships) {
+    const childToParents = new Map();
+
+    relationships
+      .filter(r => r.type === 'rt13')
+      .forEach(r => {
+        if (!childToParents.has(r.to)) childToParents.set(r.to, new Set());
+        childToParents.get(r.to).add(r.from);
+      });
+
+    const grouped = new Map();
+
+    childToParents.forEach((parentsSet, childId) => {
+      const parents = Array.from(parentsSet).sort();
+      const key = parents.join('|');
+
+      if (!grouped.has(key)) {
+        grouped.set(key, { parents: new Set(parents), children: new Set() });
+      }
+
+      grouped.get(key).children.add(childId);
+    });
+
+    return Array.from(grouped.entries()).map(([key, members], i) => ({
+      id: `family_group_${i + 1}`,
+      key,
+      members: [...members.parents, ...members.children]
+    }));
+  }
+
   const nodes = data.people.map(p => ({
     data: { id: p.id, label: p.name }
   }));
@@ -25,9 +62,12 @@ async function loadGraph() {
         year: r.year,
         description: r.description,
         type: r.type
-      }
+      },
+      classes: edgeClassForType(r.type)
     };
   });
+
+  const familyGroups = buildFamilyGroups(data.relationships);
 
   const cy = cytoscape({
     container: document.getElementById('cy'),
@@ -55,18 +95,86 @@ async function loadGraph() {
           'font-size': '12px',
           'line-color': '#999',
           'target-arrow-color': '#999',
-          'target-arrow-shape': 'triangle',
+          'target-arrow-shape': 'none',
           'curve-style': 'bezier',
+          'control-point-step-size': 40,
           'text-background-color': '#ffffff',
           'text-background-opacity': 0.8,
           'text-background-padding': '3px',
           'transition-property': 'opacity',
           'transition-duration': '0.3s'
         }
+      },
+      {
+        selector: 'edge.edge-meeting',
+        style: {
+          'line-color': '#7f8c8d',
+          'target-arrow-color': '#7f8c8d',
+          'width': 2
+        }
+      },
+      {
+        selector: 'edge.edge-couple',
+        style: {
+          'line-color': '#f59e0b',
+          'target-arrow-color': '#f59e0b',
+          'line-style': 'dashed',
+          'width': 3,
+          'curve-style': 'unbundled-bezier',
+          'control-point-distances': -28,
+          'control-point-weights': 0.5
+        }
+      },
+      {
+        selector: 'edge.edge-married',
+        style: {
+          'line-color': '#c2410c',
+          'target-arrow-color': '#c2410c',
+          'width': 4,
+          'line-outline-width': 2,
+          'line-outline-color': '#fdba74',
+          'curve-style': 'unbundled-bezier',
+          'control-point-distances': 28,
+          'control-point-weights': 0.5
+        }
+      },
+      {
+        selector: 'edge.edge-parent',
+        style: {
+          'line-color': '#16a34a',
+          'target-arrow-color': '#16a34a',
+          'target-arrow-shape': 'triangle',
+          'width': 3
+        }
+      },
+      {
+        selector: 'node.family-group',
+        style: {
+          'background-color': '#ec4899',
+          'background-opacity': 0.1,
+          'border-width': 2,
+          'border-style': 'dashed',
+          'border-color': '#db2777',
+          'shape': 'round-rectangle',
+          'padding': '22px',
+          'label': 'Family',
+          'text-valign': 'top',
+          'text-halign': 'center',
+          'font-size': '11px',
+          'color': '#9d174d',
+          'z-compound-depth': 'bottom',
+          'events': 'no',
+          'display': 'none'
+        }
       }
     ],
     layout: { name: 'cose', animate: true }
   });
+
+  cy.add(familyGroups.map(group => ({
+    data: { id: group.id },
+    classes: 'family-group'
+  })));
 
   // Center graph on clicked person
   cy.on('tap', 'node', evt => {
@@ -81,6 +189,7 @@ async function loadGraph() {
   // Drawer toggle
   const drawer = document.getElementById('drawer');
   const drawerToggle = document.getElementById('drawerToggle');
+  const familyGroupingToggle = document.getElementById('familyGroupingToggle');
 
   drawerToggle.addEventListener('click', () => {
     drawer.classList.toggle('open');
@@ -89,6 +198,42 @@ async function loadGraph() {
   function closeDrawer() {
     drawer.classList.remove('open');
   }
+
+  function setFamilyGrouping(enabled, options = {}) {
+    const { animate = true } = options;
+
+    if (!familyGroups.length) return;
+
+    familyGroups.forEach(group => {
+      const groupNode = cy.getElementById(group.id);
+
+      groupNode.style('display', enabled ? 'element' : 'none');
+      group.members.forEach(memberId => {
+        const memberNode = cy.getElementById(memberId);
+        if (memberNode.nonempty()) {
+          memberNode.move({ parent: enabled ? group.id : null });
+        }
+      });
+    });
+
+    cy.layout({
+      name: 'cose',
+      animate,
+      animationDuration: 650,
+      fit: false
+    }).run();
+  }
+
+  if (familyGroupingToggle) {
+    familyGroupingToggle.addEventListener('change', () => {
+      setFamilyGrouping(familyGroupingToggle.checked, { animate: true });
+      closeDrawer();
+    });
+
+    familyGroupingToggle.checked = true;
+  }
+
+  setFamilyGrouping(true, { animate: true });
 
   // Hard filtering by type
   document.querySelectorAll('.filter-btn').forEach(btn => {

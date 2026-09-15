@@ -55,6 +55,10 @@ async function loadGraph() {
     return Math.abs(h);
   }
 
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
   function getCountryAtYear(locationHistory, year) {
     const fallback = 'UK';
     if (!Array.isArray(locationHistory) || !locationHistory.length) return fallback;
@@ -276,8 +280,6 @@ async function loadGraph() {
 
   function buildCountryPositions(country, personIds, year) {
     const layout = COUNTRY_LAYOUT[country] || COUNTRY_LAYOUT.UK;
-    const usableWidth = layout.width - 120;
-    const usableHeight = layout.height - 180;
     const sortedIds = [...personIds].sort((a, b) => {
       return hashString(`${country}:${a}`) - hashString(`${country}:${b}`);
     });
@@ -286,11 +288,32 @@ async function loadGraph() {
     const positions = new Map();
     if (!count) return positions;
 
+    const horizontalPadding = count <= 4 ? 120 : count <= 10 ? 92 : 56;
+    const verticalPadding = count <= 4 ? 142 : count <= 10 ? 110 : 76;
     const bounds = {
-      minX: layout.center.x - usableWidth / 2 + 48,
-      maxX: layout.center.x + usableWidth / 2 - 48,
-      minY: layout.center.y - usableHeight / 2 + 48,
-      maxY: layout.center.y + usableHeight / 2 - 48
+      minX: layout.center.x - layout.width / 2 + horizontalPadding,
+      maxX: layout.center.x + layout.width / 2 - horizontalPadding,
+      minY: layout.center.y - layout.height / 2 + verticalPadding,
+      maxY: layout.center.y + layout.height / 2 - verticalPadding
+    };
+    const boundsWidth = bounds.maxX - bounds.minX;
+    const boundsHeight = bounds.maxY - bounds.minY;
+
+    const spreadWidth = clamp(
+      Math.sqrt(count) * 150,
+      boundsWidth * 0.52,
+      boundsWidth
+    );
+    const spreadHeight = clamp(
+      Math.sqrt(count) * 138,
+      boundsHeight * 0.48,
+      boundsHeight
+    );
+    const activeBounds = {
+      minX: layout.center.x - spreadWidth / 2,
+      maxX: layout.center.x + spreadWidth / 2,
+      minY: layout.center.y - spreadHeight / 2,
+      maxY: layout.center.y + spreadHeight / 2
     };
 
     const idSet = new Set(sortedIds);
@@ -345,44 +368,67 @@ async function loadGraph() {
     });
 
     const anchorByPerson = new Map();
+    const radiusByPerson = new Map();
     const center = layout.center;
-    const ringRadiusX = Math.max(0, usableWidth * 0.28);
-    const ringRadiusY = Math.max(0, usableHeight * 0.24);
+    const clusterCount = clusters.length;
+    const activeWidth = activeBounds.maxX - activeBounds.minX;
+    const activeHeight = activeBounds.maxY - activeBounds.minY;
+    const outerClusterCount = Math.max(0, clusterCount - 1);
+    const ringRadiusX = Math.max(0, activeWidth * 0.36);
+    const ringRadiusY = Math.max(0, activeHeight * 0.36);
 
     clusters.forEach((cluster, index) => {
       let clusterCenter = { ...center };
+      let clusterRadiusLimit = Math.min(activeWidth, activeHeight) * 0.42;
 
       if (index > 0) {
-        const angle = (-Math.PI / 2) + ((2 * Math.PI * (index - 1)) / Math.max(1, clusters.length - 1));
+        const angle = (-Math.PI / 2) + ((2 * Math.PI * (index - 1)) / Math.max(1, outerClusterCount));
+        const jitterX = ((hashString(`${country}:${cluster.members[0]}:x`) % 1000) / 1000) - 0.5;
+        const jitterY = ((hashString(`${country}:${cluster.members[0]}:y`) % 1000) / 1000) - 0.5;
+        const spokeSpacing = outerClusterCount > 1
+          ? Math.min(ringRadiusX, ringRadiusY) * Math.PI / outerClusterCount
+          : Math.min(activeWidth, activeHeight) * 0.26;
+
         clusterCenter = {
-          x: center.x + (Math.cos(angle) * ringRadiusX),
-          y: center.y + (Math.sin(angle) * ringRadiusY)
+          x: center.x + (Math.cos(angle) * ringRadiusX) + (jitterX * 12),
+          y: center.y + (Math.sin(angle) * ringRadiusY) + (jitterY * 10)
         };
+
+        clusterRadiusLimit = Math.min(78, Math.max(0, spokeSpacing * 0.26));
       }
+
+      const clusterRadius = clamp(
+        54 + (Math.sqrt(cluster.members.length) * 44),
+        cluster.members.length === 1 ? 0 : 54,
+        Math.max(cluster.members.length === 1 ? 0 : 54, clusterRadiusLimit)
+      );
 
       cluster.members.forEach(memberId => {
         anchorByPerson.set(memberId, clusterCenter);
+        radiusByPerson.set(memberId, clusterRadius);
       });
     });
 
     clusters.forEach(cluster => {
       const memberCount = cluster.members.length;
       const clusterCenter = anchorByPerson.get(cluster.members[0]) || center;
-      const clusterRadius = Math.min(
-        150,
-        28 + (Math.sqrt(memberCount) * 38)
-      );
+      const clusterRadius = radiusByPerson.get(cluster.members[0]) || 120;
 
       cluster.members.forEach((personId, index) => {
-        const angle = ((2 * Math.PI * index) / Math.max(1, memberCount)) + ((hashString(`${country}:${personId}`) % 360) * Math.PI / 1800);
-        const radiusScale = memberCount === 1 ? 0 : (0.42 + ((index % 3) * 0.16));
+        const angleOffset = (hashString(`${country}:${cluster.members[0]}:cluster`) % 360) * Math.PI / 180;
+        const angle = memberCount === 1
+          ? angleOffset
+          : ((index * 2.399963229728653) + angleOffset);
+        const radiusScale = memberCount === 1
+          ? 0
+          : Math.min(0.96, Math.sqrt((index + 0.5) / memberCount));
         positions.set(personId, {
           x: clusterCenter.x + (Math.cos(angle) * clusterRadius * radiusScale),
           y: clusterCenter.y + (Math.sin(angle) * clusterRadius * radiusScale)
         });
       });
 
-      for (let iteration = 0; iteration < 120; iteration++) {
+      for (let iteration = 0; iteration < 160; iteration++) {
         const movement = new Map(cluster.members.map(id => [id, { x: 0, y: 0 }]));
 
         for (let i = 0; i < cluster.members.length; i++) {
@@ -394,7 +440,7 @@ async function loadGraph() {
             const dx = posB.x - posA.x;
             const dy = posB.y - posA.y;
             const dist = Math.max(1, Math.hypot(dx, dy));
-            const force = Math.min(7, 4200 / (dist * dist));
+            const force = Math.min(11, 7600 / (dist * dist));
             const offsetX = (dx / dist) * force;
             const offsetY = (dy / dist) * force;
 
@@ -411,8 +457,10 @@ async function loadGraph() {
           const dx = posB.x - posA.x;
           const dy = posB.y - posA.y;
           const dist = Math.max(1, Math.hypot(dx, dy));
-          const targetDistance = edge.weight >= 1.7 ? 88 : 108;
-          const spring = (dist - targetDistance) * 0.03 * edge.weight;
+          const targetDistance = edge.weight >= 1.7
+            ? clamp(clusterRadius * 0.84, 92, 124)
+            : clamp(clusterRadius * 1.02, 112, 154);
+          const spring = (dist - targetDistance) * 0.028 * edge.weight;
           const offsetX = (dx / dist) * spring;
           const offsetY = (dy / dist) * spring;
 
@@ -428,8 +476,8 @@ async function loadGraph() {
           const driftX = anchor.x - pos.x;
           const driftY = anchor.y - pos.y;
 
-          movement.get(personId).x += driftX * 0.018;
-          movement.get(personId).y += driftY * 0.018;
+          movement.get(personId).x += driftX * 0.01;
+          movement.get(personId).y += driftY * 0.01;
         });
 
         cluster.members.forEach(personId => {
@@ -466,11 +514,11 @@ async function loadGraph() {
           const dx = posB.x - posA.x;
           const dy = posB.y - posA.y;
           const dist = Math.max(1, Math.hypot(dx, dy));
-          const minDistance = 96;
+          const minDistance = count <= 6 ? 148 : count <= 12 ? 134 : 126;
 
           if (dist >= minDistance) continue;
 
-          const push = ((minDistance - dist) / 2) * 0.22;
+          const push = ((minDistance - dist) / 2) * 0.32;
           const pushX = (dx / dist) * push;
           const pushY = (dy / dist) * push;
           const anchorA = anchorByPerson.get(a) || center;

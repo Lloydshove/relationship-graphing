@@ -75,6 +75,17 @@ async function loadGraph() {
     return normalizeCountry(active.country || fallback);
   }
 
+  function isRelationshipVisibleAtYear(relationship, year) {
+    return relationship.year === null || relationship.year <= year;
+  }
+
+  function relationshipWeight(type) {
+    if (type === 'rt12') return 1.85;
+    if (type === 'rt11') return 1.65;
+    if (type === 'rt13') return 1.75;
+    return 1;
+  }
+
   const COUNTRY_LAYOUT = {
     'UK': {
       id: 'location_group_uk',
@@ -263,7 +274,7 @@ async function loadGraph() {
     n.ungrabify();
   });
 
-  function buildCountryPositions(country, personIds) {
+  function buildCountryPositions(country, personIds, year) {
     const layout = COUNTRY_LAYOUT[country] || COUNTRY_LAYOUT.UK;
     const usableWidth = layout.width - 120;
     const usableHeight = layout.height - 180;
@@ -275,23 +286,208 @@ async function loadGraph() {
     const positions = new Map();
     if (!count) return positions;
 
-    const aspectRatio = usableWidth / usableHeight;
-    const cols = Math.max(1, Math.ceil(Math.sqrt(count * aspectRatio)));
-    const rows = Math.max(1, Math.ceil(count / cols));
-    const cellWidth = usableWidth / cols;
-    const cellHeight = usableHeight / rows;
-    const xStart = layout.center.x - usableWidth / 2 + cellWidth / 2;
-    const yStart = layout.center.y - usableHeight / 2 + cellHeight / 2;
+    const bounds = {
+      minX: layout.center.x - usableWidth / 2 + 48,
+      maxX: layout.center.x + usableWidth / 2 - 48,
+      minY: layout.center.y - usableHeight / 2 + 48,
+      maxY: layout.center.y + usableHeight / 2 - 48
+    };
 
-    sortedIds.forEach((personId, index) => {
-      const row = Math.floor(index / cols);
-      const col = index % cols;
+    const idSet = new Set(sortedIds);
+    const activeEdges = data.relationships
+      .filter(r => {
+        return isRelationshipVisibleAtYear(r, year) && idSet.has(r.from) && idSet.has(r.to);
+      })
+      .map(r => ({
+        source: r.from,
+        target: r.to,
+        weight: relationshipWeight(r.type)
+      }));
 
-      positions.set(personId, {
-        x: xStart + (col * cellWidth),
-        y: yStart + (row * cellHeight)
+    const adjacency = new Map(sortedIds.map(id => [id, new Set()]));
+    activeEdges.forEach(edge => {
+      adjacency.get(edge.source)?.add(edge.target);
+      adjacency.get(edge.target)?.add(edge.source);
+    });
+
+    const clusters = [];
+    const visited = new Set();
+
+    sortedIds.forEach(personId => {
+      if (visited.has(personId)) return;
+
+      const queue = [personId];
+      const members = [];
+      visited.add(personId);
+
+      while (queue.length) {
+        const current = queue.shift();
+        members.push(current);
+
+        adjacency.get(current)?.forEach(neighbor => {
+          if (!visited.has(neighbor)) {
+            visited.add(neighbor);
+            queue.push(neighbor);
+          }
+        });
+      }
+
+      const memberSet = new Set(members);
+      clusters.push({
+        members: members.sort((a, b) => hashString(`${country}:${a}`) - hashString(`${country}:${b}`)),
+        edges: activeEdges.filter(edge => memberSet.has(edge.source) && memberSet.has(edge.target))
       });
     });
+
+    clusters.sort((a, b) => {
+      if (b.members.length !== a.members.length) return b.members.length - a.members.length;
+      return hashString(`${country}:${a.members[0]}`) - hashString(`${country}:${b.members[0]}`);
+    });
+
+    const anchorByPerson = new Map();
+    const center = layout.center;
+    const ringRadiusX = Math.max(0, usableWidth * 0.28);
+    const ringRadiusY = Math.max(0, usableHeight * 0.24);
+
+    clusters.forEach((cluster, index) => {
+      let clusterCenter = { ...center };
+
+      if (index > 0) {
+        const angle = (-Math.PI / 2) + ((2 * Math.PI * (index - 1)) / Math.max(1, clusters.length - 1));
+        clusterCenter = {
+          x: center.x + (Math.cos(angle) * ringRadiusX),
+          y: center.y + (Math.sin(angle) * ringRadiusY)
+        };
+      }
+
+      cluster.members.forEach(memberId => {
+        anchorByPerson.set(memberId, clusterCenter);
+      });
+    });
+
+    clusters.forEach(cluster => {
+      const memberCount = cluster.members.length;
+      const clusterCenter = anchorByPerson.get(cluster.members[0]) || center;
+      const clusterRadius = Math.min(
+        150,
+        28 + (Math.sqrt(memberCount) * 38)
+      );
+
+      cluster.members.forEach((personId, index) => {
+        const angle = ((2 * Math.PI * index) / Math.max(1, memberCount)) + ((hashString(`${country}:${personId}`) % 360) * Math.PI / 1800);
+        const radiusScale = memberCount === 1 ? 0 : (0.42 + ((index % 3) * 0.16));
+        positions.set(personId, {
+          x: clusterCenter.x + (Math.cos(angle) * clusterRadius * radiusScale),
+          y: clusterCenter.y + (Math.sin(angle) * clusterRadius * radiusScale)
+        });
+      });
+
+      for (let iteration = 0; iteration < 120; iteration++) {
+        const movement = new Map(cluster.members.map(id => [id, { x: 0, y: 0 }]));
+
+        for (let i = 0; i < cluster.members.length; i++) {
+          for (let j = i + 1; j < cluster.members.length; j++) {
+            const a = cluster.members[i];
+            const b = cluster.members[j];
+            const posA = positions.get(a);
+            const posB = positions.get(b);
+            const dx = posB.x - posA.x;
+            const dy = posB.y - posA.y;
+            const dist = Math.max(1, Math.hypot(dx, dy));
+            const force = Math.min(7, 4200 / (dist * dist));
+            const offsetX = (dx / dist) * force;
+            const offsetY = (dy / dist) * force;
+
+            movement.get(a).x -= offsetX;
+            movement.get(a).y -= offsetY;
+            movement.get(b).x += offsetX;
+            movement.get(b).y += offsetY;
+          }
+        }
+
+        cluster.edges.forEach(edge => {
+          const posA = positions.get(edge.source);
+          const posB = positions.get(edge.target);
+          const dx = posB.x - posA.x;
+          const dy = posB.y - posA.y;
+          const dist = Math.max(1, Math.hypot(dx, dy));
+          const targetDistance = edge.weight >= 1.7 ? 88 : 108;
+          const spring = (dist - targetDistance) * 0.03 * edge.weight;
+          const offsetX = (dx / dist) * spring;
+          const offsetY = (dy / dist) * spring;
+
+          movement.get(edge.source).x += offsetX;
+          movement.get(edge.source).y += offsetY;
+          movement.get(edge.target).x -= offsetX;
+          movement.get(edge.target).y -= offsetY;
+        });
+
+        cluster.members.forEach(personId => {
+          const pos = positions.get(personId);
+          const anchor = anchorByPerson.get(personId) || center;
+          const driftX = anchor.x - pos.x;
+          const driftY = anchor.y - pos.y;
+
+          movement.get(personId).x += driftX * 0.018;
+          movement.get(personId).y += driftY * 0.018;
+        });
+
+        cluster.members.forEach(personId => {
+          const pos = positions.get(personId);
+          const delta = movement.get(personId);
+          const anchor = anchorByPerson.get(personId) || center;
+          let nextX = pos.x + (delta.x * 0.9);
+          let nextY = pos.y + (delta.y * 0.9);
+          const offsetX = nextX - anchor.x;
+          const offsetY = nextY - anchor.y;
+          const distanceFromAnchor = Math.hypot(offsetX, offsetY);
+
+          if (distanceFromAnchor > clusterRadius) {
+            const scale = clusterRadius / distanceFromAnchor;
+            nextX = anchor.x + (offsetX * scale);
+            nextY = anchor.y + (offsetY * scale);
+          }
+
+          positions.set(personId, {
+            x: Math.min(bounds.maxX, Math.max(bounds.minX, nextX)),
+            y: Math.min(bounds.maxY, Math.max(bounds.minY, nextY))
+          });
+        });
+      }
+    });
+
+    for (let iteration = 0; iteration < 80; iteration++) {
+      for (let i = 0; i < sortedIds.length; i++) {
+        for (let j = i + 1; j < sortedIds.length; j++) {
+          const a = sortedIds[i];
+          const b = sortedIds[j];
+          const posA = positions.get(a);
+          const posB = positions.get(b);
+          const dx = posB.x - posA.x;
+          const dy = posB.y - posA.y;
+          const dist = Math.max(1, Math.hypot(dx, dy));
+          const minDistance = 96;
+
+          if (dist >= minDistance) continue;
+
+          const push = ((minDistance - dist) / 2) * 0.22;
+          const pushX = (dx / dist) * push;
+          const pushY = (dy / dist) * push;
+          const anchorA = anchorByPerson.get(a) || center;
+          const anchorB = anchorByPerson.get(b) || center;
+
+          positions.set(a, {
+            x: Math.min(bounds.maxX, Math.max(bounds.minX, posA.x - pushX + ((anchorA.x - posA.x) * 0.01))),
+            y: Math.min(bounds.maxY, Math.max(bounds.minY, posA.y - pushY + ((anchorA.y - posA.y) * 0.01)))
+          });
+
+          positions.set(b, {
+            x: Math.min(bounds.maxX, Math.max(bounds.minX, posB.x + pushX + ((anchorB.x - posB.x) * 0.01))),
+            y: Math.min(bounds.maxY, Math.max(bounds.minY, posB.y + pushY + ((anchorB.y - posB.y) * 0.01)))
+          });
+        }
+      }
+    }
 
     return positions;
   }
@@ -314,7 +510,7 @@ async function loadGraph() {
 
     const positionByPerson = new Map();
     countryToPeople.forEach((personIds, country) => {
-      buildCountryPositions(country, personIds).forEach((position, personId) => {
+      buildCountryPositions(country, personIds, year).forEach((position, personId) => {
         positionByPerson.set(personId, position);
       });
     });

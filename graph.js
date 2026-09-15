@@ -1,5 +1,6 @@
 async function loadGraph() {
   const data = await fetch('./data/relationships.json').then(r => r.json());
+  const DEFAULT_TIMELINE_YEAR = 2018;
 
   function edgeClassForType(type) {
     if (type === 'rt11') return 'edge-couple';
@@ -742,7 +743,13 @@ async function loadGraph() {
   // Timeline slider
   const slider = document.getElementById('yearSlider');
   const yearLabel = document.getElementById('yearLabel');
+  const yearBadge = document.getElementById('currentYearBadge');
   let resizeTimer;
+
+  function updateVisibleYear(year) {
+    yearLabel.textContent = `Showing relationships up to: ${year}`;
+    if (yearBadge) yearBadge.textContent = `Year: ${year}`;
+  }
 
   function currentTimelineYear() {
     return parseInt(slider.value, 10);
@@ -764,7 +771,7 @@ async function loadGraph() {
   function applyTimeline(year, options = {}) {
     const { animateLocations = true } = options;
 
-    yearLabel.textContent = `Showing relationships up to: ${year}`;
+    updateVisibleYear(year);
     const modeChanged = applyResponsiveLayout(year, { animateLocations, force: false });
 
     cy.edges().forEach(e => {
@@ -857,6 +864,7 @@ async function loadGraph() {
     }, 120);
   });
 
+  slider.value = String(clamp(DEFAULT_TIMELINE_YEAR, parseInt(slider.min, 10), parseInt(slider.max, 10)));
   syncModeClasses();
   updateLocationGroupNodes();
   applyTimeline(currentTimelineYear(), { animateLocations: false });

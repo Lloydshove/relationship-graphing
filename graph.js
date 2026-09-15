@@ -90,13 +90,10 @@ async function loadGraph() {
     return 1;
   }
 
-  const COUNTRY_LAYOUT = {
+  const COUNTRY_VISUAL = {
     'UK': {
       id: 'location_group_uk',
       label: 'U.K.',
-      center: { x: -340, y: 0 },
-      width: 520,
-      height: 600,
       color: '#0ea5e9',
       border: '#0369a1',
       text: '#0c4a6e'
@@ -104,14 +101,55 @@ async function loadGraph() {
     'Hong Kong': {
       id: 'location_group_hong_kong',
       label: 'Hong Kong',
-      center: { x: 340, y: 0 },
-      width: 520,
-      height: 600,
       color: '#22d3ee',
       border: '#0e7490',
       text: '#164e63'
     }
   };
+
+  const MOBILE_PORTRAIT_BREAKPOINT = 900;
+  const MOBILE_PORTRAIT_QUERY = `(max-width: ${MOBILE_PORTRAIT_BREAKPOINT}px) and (orientation: portrait)`;
+
+  function isMobilePortraitMode() {
+    return window.matchMedia(MOBILE_PORTRAIT_QUERY).matches;
+  }
+
+  function buildCountryLayout(mode) {
+    if (mode === 'mobile-portrait') {
+      return {
+        'UK': {
+          ...COUNTRY_VISUAL.UK,
+          center: { x: 0, y: -330 },
+          width: 680,
+          height: 540
+        },
+        'Hong Kong': {
+          ...COUNTRY_VISUAL['Hong Kong'],
+          center: { x: 0, y: 330 },
+          width: 680,
+          height: 540
+        }
+      };
+    }
+
+    return {
+      'UK': {
+        ...COUNTRY_VISUAL.UK,
+        center: { x: -340, y: 0 },
+        width: 520,
+        height: 620
+      },
+      'Hong Kong': {
+        ...COUNTRY_VISUAL['Hong Kong'],
+        center: { x: 340, y: 0 },
+        width: 520,
+        height: 620
+      }
+    };
+  }
+
+  let viewportMode = isMobilePortraitMode() ? 'mobile-portrait' : 'desktop';
+  let currentCountryLayout = buildCountryLayout(viewportMode);
 
   const peopleById = new Map(data.people.map(p => [p.id, p]));
   const familyGroups = buildFamilyGroups(data.relationships);
@@ -122,7 +160,7 @@ async function loadGraph() {
     classes: 'person'
   }));
 
-  const locationGroups = Object.values(COUNTRY_LAYOUT).map(country => ({
+  const locationGroups = Object.values(currentCountryLayout).map(country => ({
     data: {
       id: country.id,
       label: country.label,
@@ -173,9 +211,9 @@ async function loadGraph() {
           'color': '#fff',
           'text-valign': 'center',
           'text-halign': 'center',
-          'font-size': '18px',
-          'width': '80px',
-          'height': '80px',
+          'font-size': '15px',
+          'width': '64px',
+          'height': '64px',
           'transition-property': 'opacity',
           'transition-duration': '0.3s'
         }
@@ -278,8 +316,18 @@ async function loadGraph() {
     n.ungrabify();
   });
 
+  function updateLocationGroupNodes() {
+    Object.values(currentCountryLayout).forEach(country => {
+      const groupNode = cy.getElementById(country.id);
+      if (groupNode.empty()) return;
+      groupNode.data('width', country.width);
+      groupNode.data('height', country.height);
+      groupNode.position({ ...country.center });
+    });
+  }
+
   function buildCountryPositions(country, personIds, year) {
-    const layout = COUNTRY_LAYOUT[country] || COUNTRY_LAYOUT.UK;
+    const layout = currentCountryLayout[country] || currentCountryLayout.UK;
     const sortedIds = [...personIds].sort((a, b) => {
       return hashString(`${country}:${a}`) - hashString(`${country}:${b}`);
     });
@@ -288,8 +336,13 @@ async function loadGraph() {
     const positions = new Map();
     if (!count) return positions;
 
-    const horizontalPadding = count <= 4 ? 120 : count <= 10 ? 92 : 56;
-    const verticalPadding = count <= 4 ? 142 : count <= 10 ? 110 : 76;
+    const compactMode = viewportMode === 'mobile-portrait';
+    const horizontalPadding = compactMode
+      ? (count <= 4 ? 88 : count <= 10 ? 70 : 52)
+      : (count <= 4 ? 110 : count <= 10 ? 88 : 56);
+    const verticalPadding = compactMode
+      ? (count <= 4 ? 112 : count <= 10 ? 86 : 64)
+      : (count <= 4 ? 138 : count <= 10 ? 106 : 76);
     const bounds = {
       minX: layout.center.x - layout.width / 2 + horizontalPadding,
       maxX: layout.center.x + layout.width / 2 - horizontalPadding,
@@ -300,13 +353,13 @@ async function loadGraph() {
     const boundsHeight = bounds.maxY - bounds.minY;
 
     const spreadWidth = clamp(
-      Math.sqrt(count) * 150,
-      boundsWidth * 0.52,
+      Math.sqrt(count) * (compactMode ? 164 : 148),
+      boundsWidth * (compactMode ? 0.62 : 0.52),
       boundsWidth
     );
     const spreadHeight = clamp(
-      Math.sqrt(count) * 138,
-      boundsHeight * 0.48,
+      Math.sqrt(count) * (compactMode ? 156 : 138),
+      boundsHeight * (compactMode ? 0.58 : 0.48),
       boundsHeight
     );
     const activeBounds = {
@@ -514,7 +567,7 @@ async function loadGraph() {
           const dx = posB.x - posA.x;
           const dy = posB.y - posA.y;
           const dist = Math.max(1, Math.hypot(dx, dy));
-          const minDistance = count <= 6 ? 148 : count <= 12 ? 134 : 126;
+          const minDistance = count <= 6 ? 126 : count <= 12 ? 116 : 108;
 
           if (dist >= minDistance) continue;
 
@@ -565,6 +618,7 @@ async function loadGraph() {
 
     cy.nodes('.person').forEach(node => {
       const targetPosition = positionByPerson.get(node.id());
+      if (!targetPosition) return;
       node.stop();
 
       if (animate) {
@@ -578,7 +632,7 @@ async function loadGraph() {
       }
     });
 
-    cy.fit(cy.elements(), 30);
+    cy.fit(cy.elements(), viewportMode === 'mobile-portrait' ? 16 : 30);
   }
 
   // Center graph on clicked person
@@ -595,6 +649,27 @@ async function loadGraph() {
   const drawer = document.getElementById('drawer');
   const drawerToggle = document.getElementById('drawerToggle');
   const familyGroupingToggle = document.getElementById('familyGroupingToggle');
+  const advancedControlsToggle = document.getElementById('toggleAdvancedControls');
+
+  function setAdvancedControlsExpanded(expanded) {
+    drawer.classList.toggle('show-advanced', expanded);
+    if (advancedControlsToggle) {
+      advancedControlsToggle.textContent = expanded ? 'Show fewer controls' : 'Show more controls';
+      advancedControlsToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    }
+  }
+
+  function syncModeClasses() {
+    document.body.classList.toggle('mobile-portrait', viewportMode === 'mobile-portrait');
+    document.body.classList.toggle('desktop-layout', viewportMode !== 'mobile-portrait');
+    setAdvancedControlsExpanded(viewportMode !== 'mobile-portrait');
+  }
+
+  if (advancedControlsToggle) {
+    advancedControlsToggle.addEventListener('click', () => {
+      setAdvancedControlsExpanded(!drawer.classList.contains('show-advanced'));
+    });
+  }
 
   drawerToggle.addEventListener('click', () => {
     drawer.classList.toggle('open');
@@ -662,11 +737,30 @@ async function loadGraph() {
   // Timeline slider
   const slider = document.getElementById('yearSlider');
   const yearLabel = document.getElementById('yearLabel');
+  let resizeTimer;
+
+  function currentTimelineYear() {
+    return parseInt(slider.value, 10);
+  }
+
+  function applyResponsiveLayout(year, options = {}) {
+    const { animateLocations = true, force = false } = options;
+    const nextMode = isMobilePortraitMode() ? 'mobile-portrait' : 'desktop';
+    if (!force && nextMode === viewportMode) return false;
+
+    viewportMode = nextMode;
+    currentCountryLayout = buildCountryLayout(viewportMode);
+    syncModeClasses();
+    updateLocationGroupNodes();
+    applyLocationGrouping(year, { animate: animateLocations });
+    return true;
+  }
 
   function applyTimeline(year, options = {}) {
     const { animateLocations = true } = options;
 
     yearLabel.textContent = `Showing relationships up to: ${year}`;
+    const modeChanged = applyResponsiveLayout(year, { animateLocations, force: false });
 
     cy.edges().forEach(e => {
       const y = e.data('year');
@@ -678,7 +772,9 @@ async function loadGraph() {
       }
     });
 
-    applyLocationGrouping(year, { animate: animateLocations });
+    if (!modeChanged) {
+      applyLocationGrouping(year, { animate: animateLocations });
+    }
 
     // Pulse nodes connected to newly visible edges
     cy.edges().forEach(e => {
@@ -701,7 +797,7 @@ async function loadGraph() {
   slider.addEventListener('input', () => {
     const clearDecadeBtn = document.getElementById('clearDecade');
     if (clearDecadeBtn) clearDecadeBtn.click(); // auto-clear decade filter
-    applyTimeline(parseInt(slider.value, 10));
+    applyTimeline(currentTimelineYear());
     closeDrawer();
   });
 
@@ -799,7 +895,16 @@ async function loadGraph() {
     document.body.classList.toggle('light');
   });
 
-  applyTimeline(parseInt(slider.value, 10), { animateLocations: false });
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      applyResponsiveLayout(currentTimelineYear(), { animateLocations: false, force: true });
+    }, 120);
+  });
+
+  syncModeClasses();
+  updateLocationGroupNodes();
+  applyTimeline(currentTimelineYear(), { animateLocations: false });
 }
 
 loadGraph();

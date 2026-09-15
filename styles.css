@@ -50,6 +50,54 @@ header {
   pointer-events: none;
 }
 
+#timelinePanel {
+  position: fixed;
+  top: 72px;
+  right: 20px;
+  width: min(500px, calc(100vw - 40px));
+  z-index: 11;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
+}
+
+#timelinePanel h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.timeline-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.timeline-control-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 9px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  background: #e5e7eb;
+  cursor: pointer;
+}
+
+.timeline-control-btn:hover {
+  background: #d1d5db;
+}
+
+.timeline-play-btn {
+  background: #2563eb;
+  color: #fff;
+}
+
+.timeline-play-btn:hover {
+  background: #1d4ed8;
+}
+
 /* Floating button */
 #drawerToggle {
   position: fixed;
@@ -198,18 +246,6 @@ body.mobile-portrait #drawer.show-advanced .advanced-only {
   margin-bottom: 10px;
 }
 
-/* Play button */
-.play-btn {
-  background: #4a90e2;
-  color: white;
-  padding: 10px;
-  border-radius: 6px;
-  border: none;
-  width: 100%;
-  margin-top: 10px;
-  font-size: 16px;
-}
-
 /* Legend colours */
 .legend-color {
   display: inline-block;
@@ -286,11 +322,51 @@ body.dark #currentYearBadge {
   color: #f8fafc;
 }
 
+body.dark #timelinePanel {
+  background: rgba(15, 23, 42, 0.94);
+  border-color: rgba(100, 116, 139, 0.55);
+  color: #f8fafc;
+}
+
+body.dark .timeline-control-btn {
+  background: #334155;
+  color: #f8fafc;
+}
+
+body.dark .timeline-control-btn:hover {
+  background: #475569;
+}
+
+body.dark .timeline-play-btn {
+  background: #1d4ed8;
+}
+
+body.dark .timeline-play-btn:hover {
+  background: #1e40af;
+}
+
 @media (max-width: 900px) {
   #currentYearBadge {
     top: 74px;
     left: 50%;
     transform: translateX(-50%);
+  }
+
+  #timelinePanel {
+    top: 116px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(620px, calc(100vw - 24px));
+    padding: 10px 12px;
+  }
+
+  .timeline-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline-control-btn {
+    font-size: 14px;
   }
 }
 

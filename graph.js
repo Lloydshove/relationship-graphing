@@ -1,5 +1,6 @@
 async function loadGraph() {
   const data = await fetch('./data/relationships.json').then(r => r.json());
+  const DEFAULT_TIMELINE_YEAR = 2018;
 
   function edgeClassForType(type) {
     if (type === 'rt11') return 'edge-couple';
@@ -338,11 +339,11 @@ async function loadGraph() {
 
     const compactMode = viewportMode === 'mobile-portrait';
     const horizontalPadding = compactMode
-      ? (count <= 4 ? 88 : count <= 10 ? 70 : 52)
-      : (count <= 4 ? 110 : count <= 10 ? 88 : 56);
+      ? (count <= 4 ? 72 : count <= 10 ? 58 : 42)
+      : (count <= 4 ? 92 : count <= 10 ? 72 : 48);
     const verticalPadding = compactMode
-      ? (count <= 4 ? 112 : count <= 10 ? 86 : 64)
-      : (count <= 4 ? 138 : count <= 10 ? 106 : 76);
+      ? (count <= 4 ? 96 : count <= 10 ? 74 : 56)
+      : (count <= 4 ? 122 : count <= 10 ? 92 : 68);
     const bounds = {
       minX: layout.center.x - layout.width / 2 + horizontalPadding,
       maxX: layout.center.x + layout.width / 2 - horizontalPadding,
@@ -353,13 +354,13 @@ async function loadGraph() {
     const boundsHeight = bounds.maxY - bounds.minY;
 
     const spreadWidth = clamp(
-      Math.sqrt(count) * (compactMode ? 164 : 148),
-      boundsWidth * (compactMode ? 0.62 : 0.52),
+      Math.sqrt(count) * (compactMode ? 182 : 168),
+      boundsWidth * (compactMode ? 0.72 : 0.62),
       boundsWidth
     );
     const spreadHeight = clamp(
-      Math.sqrt(count) * (compactMode ? 156 : 138),
-      boundsHeight * (compactMode ? 0.58 : 0.48),
+      Math.sqrt(count) * (compactMode ? 172 : 152),
+      boundsHeight * (compactMode ? 0.68 : 0.58),
       boundsHeight
     );
     const activeBounds = {
@@ -427,8 +428,8 @@ async function loadGraph() {
     const activeWidth = activeBounds.maxX - activeBounds.minX;
     const activeHeight = activeBounds.maxY - activeBounds.minY;
     const outerClusterCount = Math.max(0, clusterCount - 1);
-    const ringRadiusX = Math.max(0, activeWidth * 0.36);
-    const ringRadiusY = Math.max(0, activeHeight * 0.36);
+    const ringRadiusX = Math.max(0, activeWidth * 0.42);
+    const ringRadiusY = Math.max(0, activeHeight * 0.42);
 
     clusters.forEach((cluster, index) => {
       let clusterCenter = { ...center };
@@ -447,13 +448,13 @@ async function loadGraph() {
           y: center.y + (Math.sin(angle) * ringRadiusY) + (jitterY * 10)
         };
 
-        clusterRadiusLimit = Math.min(78, Math.max(0, spokeSpacing * 0.26));
+        clusterRadiusLimit = Math.min(96, Math.max(0, spokeSpacing * 0.32));
       }
 
       const clusterRadius = clamp(
-        54 + (Math.sqrt(cluster.members.length) * 44),
-        cluster.members.length === 1 ? 0 : 54,
-        Math.max(cluster.members.length === 1 ? 0 : 54, clusterRadiusLimit)
+        62 + (Math.sqrt(cluster.members.length) * 52),
+        cluster.members.length === 1 ? 0 : 62,
+        Math.max(cluster.members.length === 1 ? 0 : 62, clusterRadiusLimit)
       );
 
       cluster.members.forEach(memberId => {
@@ -493,7 +494,7 @@ async function loadGraph() {
             const dx = posB.x - posA.x;
             const dy = posB.y - posA.y;
             const dist = Math.max(1, Math.hypot(dx, dy));
-            const force = Math.min(11, 7600 / (dist * dist));
+            const force = Math.min(13, 9200 / (dist * dist));
             const offsetX = (dx / dist) * force;
             const offsetY = (dy / dist) * force;
 
@@ -511,8 +512,8 @@ async function loadGraph() {
           const dy = posB.y - posA.y;
           const dist = Math.max(1, Math.hypot(dx, dy));
           const targetDistance = edge.weight >= 1.7
-            ? clamp(clusterRadius * 0.84, 92, 124)
-            : clamp(clusterRadius * 1.02, 112, 154);
+            ? clamp(clusterRadius * 0.9, 102, 138)
+            : clamp(clusterRadius * 1.08, 122, 168);
           const spring = (dist - targetDistance) * 0.028 * edge.weight;
           const offsetX = (dx / dist) * spring;
           const offsetY = (dy / dist) * spring;
@@ -529,8 +530,8 @@ async function loadGraph() {
           const driftX = anchor.x - pos.x;
           const driftY = anchor.y - pos.y;
 
-          movement.get(personId).x += driftX * 0.01;
-          movement.get(personId).y += driftY * 0.01;
+          movement.get(personId).x += driftX * 0.008;
+          movement.get(personId).y += driftY * 0.008;
         });
 
         cluster.members.forEach(personId => {
@@ -567,7 +568,7 @@ async function loadGraph() {
           const dx = posB.x - posA.x;
           const dy = posB.y - posA.y;
           const dist = Math.max(1, Math.hypot(dx, dy));
-          const minDistance = count <= 6 ? 126 : count <= 12 ? 116 : 108;
+          const minDistance = count <= 6 ? 142 : count <= 12 ? 130 : 120;
 
           if (dist >= minDistance) continue;
 
@@ -648,6 +649,7 @@ async function loadGraph() {
   // Drawer toggle
   const drawer = document.getElementById('drawer');
   const drawerToggle = document.getElementById('drawerToggle');
+  const drawerClose = document.getElementById('drawerClose');
   const familyGroupingToggle = document.getElementById('familyGroupingToggle');
   const advancedControlsToggle = document.getElementById('toggleAdvancedControls');
 
@@ -677,6 +679,10 @@ async function loadGraph() {
 
   function closeDrawer() {
     drawer.classList.remove('open');
+  }
+
+  if (drawerClose) {
+    drawerClose.addEventListener('click', closeDrawer);
   }
 
   function setFamilyGrouping(enabled) {
@@ -737,7 +743,13 @@ async function loadGraph() {
   // Timeline slider
   const slider = document.getElementById('yearSlider');
   const yearLabel = document.getElementById('yearLabel');
+  const yearBadge = document.getElementById('currentYearBadge');
   let resizeTimer;
+
+  function updateVisibleYear(year) {
+    yearLabel.textContent = `Showing relationships up to: ${year}`;
+    if (yearBadge) yearBadge.textContent = `Year: ${year}`;
+  }
 
   function currentTimelineYear() {
     return parseInt(slider.value, 10);
@@ -759,7 +771,7 @@ async function loadGraph() {
   function applyTimeline(year, options = {}) {
     const { animateLocations = true } = options;
 
-    yearLabel.textContent = `Showing relationships up to: ${year}`;
+    updateVisibleYear(year);
     const modeChanged = applyResponsiveLayout(year, { animateLocations, force: false });
 
     cy.edges().forEach(e => {
@@ -795,8 +807,6 @@ async function loadGraph() {
   }
 
   slider.addEventListener('input', () => {
-    const clearDecadeBtn = document.getElementById('clearDecade');
-    if (clearDecadeBtn) clearDecadeBtn.click(); // auto-clear decade filter
     applyTimeline(currentTimelineYear());
     closeDrawer();
   });
@@ -805,8 +815,6 @@ async function loadGraph() {
   const playBtn = document.getElementById('playTimeline');
 
   playBtn.addEventListener('click', async () => {
-    const clearDecadeBtn = document.getElementById('clearDecade');
-    if (clearDecadeBtn) clearDecadeBtn.click(); // auto-clear decade filter
     closeDrawer();
 
     const min = parseInt(slider.min, 10);
@@ -817,52 +825,6 @@ async function loadGraph() {
       applyTimeline(year, { animateLocations: true });
       await new Promise(res => setTimeout(res, 400));
     }
-  });
-
-  // Decade filtering
-  function applyDecadeFilter(decadeStart) {
-    const decadeEnd = decadeStart + 9;
-
-    cy.edges().forEach(e => {
-      const y = e.data('year');
-
-      if (y !== null && y >= decadeStart && y <= decadeEnd) {
-        e.style('display', 'element');
-      } else {
-        e.style('display', 'none');
-      }
-    });
-
-    // Pulse nodes connected to visible edges
-    cy.edges().forEach(e => {
-      const y = e.data('year');
-      if (y !== null && y >= decadeStart && y <= decadeEnd) {
-        const src = cy.getElementById(e.data('source'));
-        const tgt = cy.getElementById(e.data('target'));
-
-        src.addClass('node-pulse');
-        tgt.addClass('node-pulse');
-
-        setTimeout(() => {
-          src.removeClass('node-pulse');
-          tgt.removeClass('node-pulse');
-        }, 600);
-      }
-    });
-  }
-
-  document.querySelectorAll('.decade-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const decade = parseInt(btn.dataset.decade, 10);
-      applyDecadeFilter(decade);
-      closeDrawer();
-    });
-  });
-
-  const clearDecade = document.getElementById('clearDecade');
-  clearDecade.addEventListener('click', () => {
-    cy.edges().forEach(e => e.style('display', 'element'));
-    closeDrawer();
   });
 
   // Clustering
@@ -902,6 +864,7 @@ async function loadGraph() {
     }, 120);
   });
 
+  slider.value = String(clamp(DEFAULT_TIMELINE_YEAR, parseInt(slider.min, 10), parseInt(slider.max, 10)));
   syncModeClasses();
   updateLocationGroupNodes();
   applyTimeline(currentTimelineYear(), { animateLocations: false });

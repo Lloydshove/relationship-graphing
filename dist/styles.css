@@ -4,6 +4,12 @@ body {
   font-family: Arial, sans-serif;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 header {
   display: flex;
   justify-content: space-between;
@@ -28,6 +34,22 @@ header {
   position: relative;
 }
 
+#currentYearBadge {
+  position: fixed;
+  top: 72px;
+  left: 20px;
+  z-index: 10;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.16);
+  pointer-events: none;
+}
+
 /* Floating button */
 #drawerToggle {
   position: fixed;
@@ -48,6 +70,7 @@ header {
   position: fixed;
   bottom: -70%;
   left: 0;
+  right: 0;
   width: 100%;
   height: 70%;
   background: #fff;
@@ -56,9 +79,19 @@ header {
   transition: bottom 0.35s ease;
   overflow-y: auto;
   padding: 10px 20px;
+  z-index: 20;
 }
 
 #drawer.open {
+  bottom: 0;
+}
+
+body.mobile-portrait #drawer {
+  bottom: -88%;
+  height: 88%;
+}
+
+body.mobile-portrait #drawer.open {
   bottom: 0;
 }
 
@@ -68,6 +101,28 @@ header {
   background: #ccc;
   border-radius: 3px;
   margin: 10px auto;
+}
+
+.drawer-topbar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: env(safe-area-inset-top, 0);
+  background: inherit;
+  z-index: 1;
+}
+
+#drawerClose {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: #e5e7eb;
+  color: #111827;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .drawer-section {
@@ -100,21 +155,36 @@ header {
   margin-top: 10px;
 }
 
-/* Decade buttons */
-.decade-btn {
-  display: block;
+.secondary-toggle {
   width: 100%;
-  margin-bottom: 6px;
+  margin: 10px 0;
   padding: 10px;
-  background: #eee;
   border: none;
   border-radius: 6px;
-  text-align: left;
+  background: #dbeafe;
+  color: #1e3a8a;
+  font-weight: 600;
   cursor: pointer;
 }
 
-.decade-btn:hover {
-  background: #ddd;
+#advancedControls {
+  display: block;
+}
+
+body.mobile-portrait #advancedControls {
+  display: none;
+}
+
+body.mobile-portrait #drawer.show-advanced #advancedControls {
+  display: block;
+}
+
+body.mobile-portrait .advanced-only {
+  display: none;
+}
+
+body.mobile-portrait #drawer.show-advanced .advanced-only {
+  display: block;
 }
 
 /* Timeline slider */
@@ -159,6 +229,22 @@ header {
 .legend-color.language { background: #d35400; }
 .legend-color.college { background: #34495e; }
 .legend-color.city { background: #3498db; }
+.legend-color.couple { background: #f59e0b; }
+.legend-color.married { background: #c2410c; }
+.legend-color.parent { background: #16a34a; }
+.legend-color.location { background: #0ea5e9; }
+.legend-color.family { background: #ec4899; }
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggle-row input {
+  width: 16px;
+  height: 16px;
+}
 
 /* Node pulse animation */
 @keyframes pulse {
@@ -183,4 +269,44 @@ body.dark #drawer {
 
 body.dark #drawerToggle {
   background: #1e90ff;
+}
+
+body.dark .secondary-toggle {
+  background: #1d4ed8;
+  color: #eff6ff;
+}
+
+body.dark #drawerClose {
+  background: #374151;
+  color: #f9fafb;
+}
+
+body.dark #currentYearBadge {
+  background: rgba(30, 41, 59, 0.92);
+  color: #f8fafc;
+}
+
+@media (max-width: 900px) {
+  #currentYearBadge {
+    top: 74px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+@media (min-width: 901px) {
+  .secondary-toggle {
+    display: none;
+  }
+
+  #drawer {
+    width: 360px;
+    max-width: 36vw;
+    right: 16px;
+    left: auto;
+    bottom: -82%;
+    height: min(82vh, 760px);
+    border-radius: 16px;
+    padding: 12px 16px;
+  }
 }

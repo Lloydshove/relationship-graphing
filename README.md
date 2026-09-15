@@ -46,10 +46,9 @@ The graph models:
 
 - Interactive network graph rendering
 - Relationship type and context filters
-- Timeline slider and animation playback
+- Timeline slider and animation playback with an always-visible year badge
 - Country grouping with timeline-based location movement
 - Responsive country layout (desktop side-by-side, mobile portrait stacked)
-- Decade filtering
 - Louvain community clustering
 - Mobile-first control simplification with expandable advanced controls
 - Light/dark theme toggle

@@ -15,6 +15,7 @@
     <button id="themeToggle">Toggle theme</button>
   </header>
 
+  <div id="currentYearBadge" aria-live="polite">Year: 2018</div>
   <div id="cy"></div>
 
   <!-- Floating button -->
@@ -22,29 +23,17 @@
 
   <!-- Bottom drawer -->
   <div id="drawer">
-    <div id="drawerHandle"></div>
-
-    <!-- Decade Filter -->
-    <div class="drawer-section">
-      <h2>Decade Filter</h2>
-
-      <div class="drawer-buttons">
-        <button class="decade-btn" data-decade="1980">1980s</button>
-        <button class="decade-btn" data-decade="1990">1990s</button>
-        <button class="decade-btn" data-decade="2000">2000s</button>
-        <button class="decade-btn" data-decade="2010">2010s</button>
-        <button class="decade-btn" data-decade="2020">2020s</button>
-      </div>
-
-      <button id="clearDecade" class="clear-btn">Clear decade filter</button>
+    <div class="drawer-topbar">
+      <div id="drawerHandle"></div>
+      <button id="drawerClose" type="button" aria-label="Close menu">Close</button>
     </div>
 
     <!-- Timeline -->
     <div class="drawer-section">
       <h2>Timeline</h2>
 
-      <input type="range" id="yearSlider" min="1980" max="2026" value="2026">
-      <div id="yearLabel">Showing relationships up to: 2026</div>
+      <input type="range" id="yearSlider" min="1980" max="2026" value="2018">
+      <div id="yearLabel">Showing relationships up to: 2018</div>
 
       <button id="playTimeline" class="play-btn">▶ Play timeline</button>
     </div>

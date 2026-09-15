@@ -338,11 +338,11 @@ async function loadGraph() {
 
     const compactMode = viewportMode === 'mobile-portrait';
     const horizontalPadding = compactMode
-      ? (count <= 4 ? 88 : count <= 10 ? 70 : 52)
-      : (count <= 4 ? 110 : count <= 10 ? 88 : 56);
+      ? (count <= 4 ? 76 : count <= 10 ? 60 : 46)
+      : (count <= 4 ? 94 : count <= 10 ? 72 : 48);
     const verticalPadding = compactMode
-      ? (count <= 4 ? 112 : count <= 10 ? 86 : 64)
-      : (count <= 4 ? 138 : count <= 10 ? 106 : 76);
+      ? (count <= 4 ? 96 : count <= 10 ? 74 : 56)
+      : (count <= 4 ? 118 : count <= 10 ? 90 : 64);
     const bounds = {
       minX: layout.center.x - layout.width / 2 + horizontalPadding,
       maxX: layout.center.x + layout.width / 2 - horizontalPadding,
@@ -353,13 +353,13 @@ async function loadGraph() {
     const boundsHeight = bounds.maxY - bounds.minY;
 
     const spreadWidth = clamp(
-      Math.sqrt(count) * (compactMode ? 164 : 148),
-      boundsWidth * (compactMode ? 0.62 : 0.52),
+      Math.sqrt(count) * (compactMode ? 180 : 164),
+      boundsWidth * (compactMode ? 0.72 : 0.64),
       boundsWidth
     );
     const spreadHeight = clamp(
-      Math.sqrt(count) * (compactMode ? 156 : 138),
-      boundsHeight * (compactMode ? 0.58 : 0.48),
+      Math.sqrt(count) * (compactMode ? 170 : 150),
+      boundsHeight * (compactMode ? 0.68 : 0.6),
       boundsHeight
     );
     const activeBounds = {
@@ -427,8 +427,8 @@ async function loadGraph() {
     const activeWidth = activeBounds.maxX - activeBounds.minX;
     const activeHeight = activeBounds.maxY - activeBounds.minY;
     const outerClusterCount = Math.max(0, clusterCount - 1);
-    const ringRadiusX = Math.max(0, activeWidth * 0.36);
-    const ringRadiusY = Math.max(0, activeHeight * 0.36);
+    const ringRadiusX = Math.max(0, activeWidth * 0.42);
+    const ringRadiusY = Math.max(0, activeHeight * 0.42);
 
     clusters.forEach((cluster, index) => {
       let clusterCenter = { ...center };
@@ -447,13 +447,13 @@ async function loadGraph() {
           y: center.y + (Math.sin(angle) * ringRadiusY) + (jitterY * 10)
         };
 
-        clusterRadiusLimit = Math.min(78, Math.max(0, spokeSpacing * 0.26));
+        clusterRadiusLimit = Math.min(88, Math.max(0, spokeSpacing * 0.3));
       }
 
       const clusterRadius = clamp(
-        54 + (Math.sqrt(cluster.members.length) * 44),
-        cluster.members.length === 1 ? 0 : 54,
-        Math.max(cluster.members.length === 1 ? 0 : 54, clusterRadiusLimit)
+        64 + (Math.sqrt(cluster.members.length) * 54),
+        cluster.members.length === 1 ? 0 : 64,
+        Math.max(cluster.members.length === 1 ? 0 : 64, clusterRadiusLimit)
       );
 
       cluster.members.forEach(memberId => {
@@ -511,8 +511,8 @@ async function loadGraph() {
           const dy = posB.y - posA.y;
           const dist = Math.max(1, Math.hypot(dx, dy));
           const targetDistance = edge.weight >= 1.7
-            ? clamp(clusterRadius * 0.84, 92, 124)
-            : clamp(clusterRadius * 1.02, 112, 154);
+            ? clamp(clusterRadius * 0.9, 102, 138)
+            : clamp(clusterRadius * 1.08, 122, 170);
           const spring = (dist - targetDistance) * 0.028 * edge.weight;
           const offsetX = (dx / dist) * spring;
           const offsetY = (dy / dist) * spring;
@@ -567,7 +567,7 @@ async function loadGraph() {
           const dx = posB.x - posA.x;
           const dy = posB.y - posA.y;
           const dist = Math.max(1, Math.hypot(dx, dy));
-          const minDistance = count <= 6 ? 126 : count <= 12 ? 116 : 108;
+          const minDistance = count <= 6 ? 144 : count <= 12 ? 134 : 124;
 
           if (dist >= minDistance) continue;
 

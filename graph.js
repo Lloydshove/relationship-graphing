@@ -863,6 +863,7 @@ async function loadGraph() {
       clearTimeout(sliderInputTimer);
       sliderInputTimer = null;
     }
+    updateVisibleYear(currentTimelineYear());
     applyTimeline(currentTimelineYear());
   });
 

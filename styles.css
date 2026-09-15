@@ -50,6 +50,46 @@ header {
   pointer-events: none;
 }
 
+#timelinePanel {
+  position: fixed;
+  top: 72px;
+  right: 20px;
+  z-index: 15;
+  width: min(440px, calc(100vw - 40px));
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.16);
+}
+
+.timeline-heading {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.timeline-controls {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.timeline-controls button {
+  border: none;
+  border-radius: 6px;
+  padding: 8px 10px;
+  cursor: pointer;
+  background: #e2e8f0;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.timeline-controls button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 /* Floating button */
 #drawerToggle {
   position: fixed;
@@ -202,12 +242,13 @@ body.mobile-portrait #drawer.show-advanced .advanced-only {
 .play-btn {
   background: #4a90e2;
   color: white;
-  padding: 10px;
-  border-radius: 6px;
-  border: none;
-  width: 100%;
-  margin-top: 10px;
-  font-size: 16px;
+  font-size: 14px;
+}
+
+.pause-btn {
+  background: #334155;
+  color: #f8fafc;
+  font-size: 14px;
 }
 
 /* Legend colours */
@@ -286,11 +327,39 @@ body.dark #currentYearBadge {
   color: #f8fafc;
 }
 
+body.dark #timelinePanel {
+  background: rgba(15, 23, 42, 0.94);
+  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.45);
+}
+
+body.dark .timeline-heading,
+body.dark #yearLabel {
+  color: #e2e8f0;
+}
+
+body.dark .timeline-controls button {
+  background: #334155;
+  color: #f8fafc;
+}
+
 @media (max-width: 900px) {
   #currentYearBadge {
-    top: 74px;
+    top: 150px;
     left: 50%;
     transform: translateX(-50%);
+  }
+
+  #timelinePanel {
+    top: 72px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(560px, calc(100vw - 20px));
+    padding: 10px 12px;
+  }
+
+  .timeline-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

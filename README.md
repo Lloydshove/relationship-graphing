@@ -32,7 +32,7 @@ The graph models:
 ## Key Files
 
 - [schema.md](./schema.md) — data schema reference for people, relationship types, and relationships.
-- [index.html](./index.html) — app shell and UI controls (drawer, timeline, filters, clustering actions).
+- [index.html](./index.html) — app shell and UI controls (main-view timeline, drawer filters, clustering actions).
 - [styles.css](./styles.css) — app styling, drawer layout, and theme styles.
 - [graph.js](./graph.js) — graph loading, rendering, filtering, timeline playback, and clustering logic.
 - [data/relationships.json](./data/relationships.json) — source dataset.
@@ -46,7 +46,7 @@ The graph models:
 
 - Interactive network graph rendering
 - Relationship type and context filters
-- Timeline slider and animation playback with an always-visible year badge
+- Always-visible main-view timeline panel with slider, play/pause, step controls, and year badge
 - Country grouping with timeline-based location movement
 - Responsive country layout (desktop side-by-side, mobile portrait stacked)
 - Louvain community clustering

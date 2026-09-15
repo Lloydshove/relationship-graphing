@@ -16,6 +16,17 @@
   </header>
 
   <div id="currentYearBadge" aria-live="polite">Year: 2018</div>
+  <section id="timelinePanel" aria-label="Timeline controls">
+    <div class="timeline-heading">Timeline</div>
+    <input type="range" id="yearSlider" min="1980" max="2026" value="2018">
+    <div id="yearLabel">Showing relationships up to: 2018</div>
+    <div class="timeline-controls">
+      <button id="stepBackTimeline" type="button" aria-label="Step back one year">⏮</button>
+      <button id="playTimeline" class="play-btn" type="button">▶ Play</button>
+      <button id="pauseTimeline" class="pause-btn" type="button">⏸ Pause</button>
+      <button id="stepForwardTimeline" type="button" aria-label="Step forward one year">⏭</button>
+    </div>
+  </section>
   <div id="cy"></div>
 
   <!-- Floating button -->
@@ -26,16 +37,6 @@
     <div class="drawer-topbar">
       <div id="drawerHandle"></div>
       <button id="drawerClose" type="button" aria-label="Close menu">Close</button>
-    </div>
-
-    <!-- Timeline -->
-    <div class="drawer-section">
-      <h2>Timeline</h2>
-
-      <input type="range" id="yearSlider" min="1980" max="2026" value="2018">
-      <div id="yearLabel">Showing relationships up to: 2018</div>
-
-      <button id="playTimeline" class="play-btn">▶ Play timeline</button>
     </div>
 
     <!-- Filters -->

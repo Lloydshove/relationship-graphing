@@ -89,6 +89,11 @@ header {
   background: #d1d5db;
 }
 
+.timeline-control-btn:focus-visible {
+  outline: 3px solid #1d4ed8;
+  outline-offset: 2px;
+}
+
 .timeline-play-btn {
   background: #2563eb;
   color: #fff;
@@ -335,6 +340,10 @@ body.dark .timeline-control-btn {
 
 body.dark .timeline-control-btn:hover {
   background: #475569;
+}
+
+body.dark .timeline-control-btn:focus-visible {
+  outline-color: #93c5fd;
 }
 
 body.dark .timeline-play-btn {

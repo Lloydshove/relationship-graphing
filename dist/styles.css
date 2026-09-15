@@ -34,6 +34,22 @@ header {
   position: relative;
 }
 
+#currentYearBadge {
+  position: fixed;
+  top: 72px;
+  left: 20px;
+  z-index: 10;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.16);
+  pointer-events: none;
+}
+
 /* Floating button */
 #drawerToggle {
   position: fixed;
@@ -263,6 +279,19 @@ body.dark .secondary-toggle {
 body.dark #drawerClose {
   background: #374151;
   color: #f9fafb;
+}
+
+body.dark #currentYearBadge {
+  background: rgba(30, 41, 59, 0.92);
+  color: #f8fafc;
+}
+
+@media (max-width: 900px) {
+  #currentYearBadge {
+    top: 74px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
 
 @media (min-width: 901px) {

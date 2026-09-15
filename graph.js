@@ -263,32 +263,64 @@ async function loadGraph() {
     n.ungrabify();
   });
 
-  function getLocationPosition(personId, country) {
+  function buildCountryPositions(country, personIds) {
     const layout = COUNTRY_LAYOUT[country] || COUNTRY_LAYOUT.UK;
-    const usableWidth = layout.width - 130;
-    const usableHeight = layout.height - 160;
+    const usableWidth = layout.width - 120;
+    const usableHeight = layout.height - 180;
+    const sortedIds = [...personIds].sort((a, b) => {
+      return hashString(`${country}:${a}`) - hashString(`${country}:${b}`);
+    });
 
-    const xHash = hashString(`${personId}:${country}:x`) % 1000;
-    const yHash = hashString(`${personId}:${country}:y`) % 1000;
+    const count = sortedIds.length;
+    const positions = new Map();
+    if (!count) return positions;
 
-    const xOffset = (xHash / 999 - 0.5) * usableWidth;
-    const yOffset = (yHash / 999 - 0.5) * usableHeight;
+    const aspectRatio = usableWidth / usableHeight;
+    const cols = Math.max(1, Math.ceil(Math.sqrt(count * aspectRatio)));
+    const rows = Math.max(1, Math.ceil(count / cols));
+    const cellWidth = usableWidth / cols;
+    const cellHeight = usableHeight / rows;
+    const xStart = layout.center.x - usableWidth / 2 + cellWidth / 2;
+    const yStart = layout.center.y - usableHeight / 2 + cellHeight / 2;
 
-    return {
-      x: layout.center.x + xOffset,
-      y: layout.center.y + yOffset
-    };
+    sortedIds.forEach((personId, index) => {
+      const row = Math.floor(index / cols);
+      const col = index % cols;
+
+      positions.set(personId, {
+        x: xStart + (col * cellWidth),
+        y: yStart + (row * cellHeight)
+      });
+    });
+
+    return positions;
   }
 
   function applyLocationGrouping(year, options = {}) {
     const { animate = true } = options;
+    const countryToPeople = new Map();
 
     cy.nodes('.person').forEach(node => {
       const person = peopleById.get(node.id());
       const country = getCountryAtYear(person?.locationHistory || [], year);
-      const targetPosition = getLocationPosition(node.id(), country);
-
       node.data('country', country);
+
+      if (!countryToPeople.has(country)) {
+        countryToPeople.set(country, []);
+      }
+
+      countryToPeople.get(country).push(node.id());
+    });
+
+    const positionByPerson = new Map();
+    countryToPeople.forEach((personIds, country) => {
+      buildCountryPositions(country, personIds).forEach((position, personId) => {
+        positionByPerson.set(personId, position);
+      });
+    });
+
+    cy.nodes('.person').forEach(node => {
+      const targetPosition = positionByPerson.get(node.id());
       node.stop();
 
       if (animate) {

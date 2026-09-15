@@ -339,11 +339,11 @@ async function loadGraph() {
 
     const compactMode = viewportMode === 'mobile-portrait';
     const horizontalPadding = compactMode
-      ? (count <= 4 ? 72 : count <= 10 ? 58 : 42)
-      : (count <= 4 ? 92 : count <= 10 ? 72 : 48);
+      ? (count <= 4 ? 56 : count <= 10 ? 42 : 30)
+      : (count <= 4 ? 70 : count <= 10 ? 54 : 34);
     const verticalPadding = compactMode
-      ? (count <= 4 ? 96 : count <= 10 ? 74 : 56)
-      : (count <= 4 ? 122 : count <= 10 ? 92 : 68);
+      ? (count <= 4 ? 76 : count <= 10 ? 58 : 42)
+      : (count <= 4 ? 94 : count <= 10 ? 70 : 50);
     const bounds = {
       minX: layout.center.x - layout.width / 2 + horizontalPadding,
       maxX: layout.center.x + layout.width / 2 - horizontalPadding,
@@ -354,13 +354,13 @@ async function loadGraph() {
     const boundsHeight = bounds.maxY - bounds.minY;
 
     const spreadWidth = clamp(
-      Math.sqrt(count) * (compactMode ? 182 : 168),
-      boundsWidth * (compactMode ? 0.72 : 0.62),
+      Math.sqrt(count) * (compactMode ? 206 : 188),
+      boundsWidth * (compactMode ? 0.82 : 0.76),
       boundsWidth
     );
     const spreadHeight = clamp(
-      Math.sqrt(count) * (compactMode ? 172 : 152),
-      boundsHeight * (compactMode ? 0.68 : 0.58),
+      Math.sqrt(count) * (compactMode ? 194 : 174),
+      boundsHeight * (compactMode ? 0.78 : 0.72),
       boundsHeight
     );
     const activeBounds = {
@@ -452,9 +452,9 @@ async function loadGraph() {
       }
 
       const clusterRadius = clamp(
-        62 + (Math.sqrt(cluster.members.length) * 52),
-        cluster.members.length === 1 ? 0 : 62,
-        Math.max(cluster.members.length === 1 ? 0 : 62, clusterRadiusLimit)
+        74 + (Math.sqrt(cluster.members.length) * 58),
+        cluster.members.length === 1 ? 0 : 74,
+        Math.max(cluster.members.length === 1 ? 0 : 74, clusterRadiusLimit)
       );
 
       cluster.members.forEach(memberId => {
@@ -482,7 +482,7 @@ async function loadGraph() {
         });
       });
 
-      for (let iteration = 0; iteration < 160; iteration++) {
+      for (let iteration = 0; iteration < 190; iteration++) {
         const movement = new Map(cluster.members.map(id => [id, { x: 0, y: 0 }]));
 
         for (let i = 0; i < cluster.members.length; i++) {
@@ -494,7 +494,7 @@ async function loadGraph() {
             const dx = posB.x - posA.x;
             const dy = posB.y - posA.y;
             const dist = Math.max(1, Math.hypot(dx, dy));
-            const force = Math.min(13, 9200 / (dist * dist));
+            const force = Math.min(16, 13200 / (dist * dist));
             const offsetX = (dx / dist) * force;
             const offsetY = (dy / dist) * force;
 
@@ -512,8 +512,8 @@ async function loadGraph() {
           const dy = posB.y - posA.y;
           const dist = Math.max(1, Math.hypot(dx, dy));
           const targetDistance = edge.weight >= 1.7
-            ? clamp(clusterRadius * 0.9, 102, 138)
-            : clamp(clusterRadius * 1.08, 122, 168);
+            ? clamp(clusterRadius * 0.92, 110, 156)
+            : clamp(clusterRadius * 1.1, 130, 184);
           const spring = (dist - targetDistance) * 0.028 * edge.weight;
           const offsetX = (dx / dist) * spring;
           const offsetY = (dy / dist) * spring;
@@ -530,8 +530,8 @@ async function loadGraph() {
           const driftX = anchor.x - pos.x;
           const driftY = anchor.y - pos.y;
 
-          movement.get(personId).x += driftX * 0.008;
-          movement.get(personId).y += driftY * 0.008;
+          movement.get(personId).x += driftX * 0.005;
+          movement.get(personId).y += driftY * 0.005;
         });
 
         cluster.members.forEach(personId => {
@@ -558,7 +558,9 @@ async function loadGraph() {
       }
     });
 
-    for (let iteration = 0; iteration < 80; iteration++) {
+    const preferredSpacing = count <= 6 ? 172 : count <= 12 ? 156 : 142;
+    for (let iteration = 0; iteration < 120; iteration++) {
+      const movement = new Map(sortedIds.map(id => [id, { x: 0, y: 0 }]));
       for (let i = 0; i < sortedIds.length; i++) {
         for (let j = i + 1; j < sortedIds.length; j++) {
           const a = sortedIds[i];
@@ -568,27 +570,30 @@ async function loadGraph() {
           const dx = posB.x - posA.x;
           const dy = posB.y - posA.y;
           const dist = Math.max(1, Math.hypot(dx, dy));
-          const minDistance = count <= 6 ? 142 : count <= 12 ? 130 : 120;
-
-          if (dist >= minDistance) continue;
-
-          const push = ((minDistance - dist) / 2) * 0.32;
+          if (dist >= preferredSpacing) continue;
+          const push = ((preferredSpacing - dist) / 2) * 0.44;
           const pushX = (dx / dist) * push;
           const pushY = (dy / dist) * push;
-          const anchorA = anchorByPerson.get(a) || center;
-          const anchorB = anchorByPerson.get(b) || center;
 
-          positions.set(a, {
-            x: Math.min(bounds.maxX, Math.max(bounds.minX, posA.x - pushX + ((anchorA.x - posA.x) * 0.01))),
-            y: Math.min(bounds.maxY, Math.max(bounds.minY, posA.y - pushY + ((anchorA.y - posA.y) * 0.01)))
-          });
-
-          positions.set(b, {
-            x: Math.min(bounds.maxX, Math.max(bounds.minX, posB.x + pushX + ((anchorB.x - posB.x) * 0.01))),
-            y: Math.min(bounds.maxY, Math.max(bounds.minY, posB.y + pushY + ((anchorB.y - posB.y) * 0.01)))
-          });
+          movement.get(a).x -= pushX;
+          movement.get(a).y -= pushY;
+          movement.get(b).x += pushX;
+          movement.get(b).y += pushY;
         }
       }
+
+      sortedIds.forEach(personId => {
+        const pos = positions.get(personId);
+        const delta = movement.get(personId);
+        const anchor = anchorByPerson.get(personId) || center;
+        const nextX = pos.x + delta.x + ((anchor.x - pos.x) * 0.006);
+        const nextY = pos.y + delta.y + ((anchor.y - pos.y) * 0.006);
+
+        positions.set(personId, {
+          x: Math.min(bounds.maxX, Math.max(bounds.minX, nextX)),
+          y: Math.min(bounds.maxY, Math.max(bounds.minY, nextY))
+        });
+      });
     }
 
     return positions;
@@ -744,7 +749,12 @@ async function loadGraph() {
   const slider = document.getElementById('yearSlider');
   const yearLabel = document.getElementById('yearLabel');
   const yearBadge = document.getElementById('currentYearBadge');
+  const playBtn = document.getElementById('playTimeline');
+  const stepBackBtn = document.getElementById('timelineStepBack');
+  const stepForwardBtn = document.getElementById('timelineStepForward');
   let resizeTimer;
+  let sliderInputTimer = null;
+  let timelinePlaybackTimer = null;
 
   function updateVisibleYear(year) {
     yearLabel.textContent = `Showing relationships up to: ${year}`;
@@ -753,6 +763,36 @@ async function loadGraph() {
 
   function currentTimelineYear() {
     return parseInt(slider.value, 10);
+  }
+
+  function updatePlaybackUi(isPlaying) {
+    if (!playBtn) return;
+    playBtn.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
+    playBtn.setAttribute('aria-label', isPlaying ? 'Pause timeline' : 'Play timeline');
+    playBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
+  }
+
+  function stopTimelinePlayback() {
+    if (timelinePlaybackTimer !== null) {
+      clearInterval(timelinePlaybackTimer);
+      timelinePlaybackTimer = null;
+    }
+    updatePlaybackUi(false);
+  }
+
+  function setTimelineYear(year, options = {}) {
+    slider.value = String(year);
+    applyTimeline(year, options);
+  }
+
+  function stepTimeline(delta, options = {}) {
+    const { stopPlayback = true, animateLocations = true } = options;
+    if (stopPlayback) stopTimelinePlayback();
+    const min = parseInt(slider.min, 10);
+    const max = parseInt(slider.max, 10);
+    const nextYear = clamp(currentTimelineYear() + delta, min, max);
+    setTimelineYear(nextYear, { animateLocations });
+    return nextYear;
   }
 
   function applyResponsiveLayout(year, options = {}) {
@@ -807,25 +847,69 @@ async function loadGraph() {
   }
 
   slider.addEventListener('input', () => {
-    applyTimeline(currentTimelineYear());
-    closeDrawer();
+    stopTimelinePlayback();
+    updateVisibleYear(currentTimelineYear());
+    if (sliderInputTimer !== null) {
+      clearTimeout(sliderInputTimer);
+    }
+    sliderInputTimer = setTimeout(() => {
+      sliderInputTimer = null;
+      applyTimeline(currentTimelineYear());
+    }, 90);
   });
 
-  // Timeline animation
-  const playBtn = document.getElementById('playTimeline');
+  slider.addEventListener('change', () => {
+    if (sliderInputTimer !== null) {
+      clearTimeout(sliderInputTimer);
+      sliderInputTimer = null;
+    }
+    updateVisibleYear(currentTimelineYear());
+    applyTimeline(currentTimelineYear());
+  });
 
-  playBtn.addEventListener('click', async () => {
-    closeDrawer();
+  if (stepBackBtn) {
+    stepBackBtn.addEventListener('click', () => {
+    stepTimeline(-1);
+    });
+  }
 
+  if (stepForwardBtn) {
+    stepForwardBtn.addEventListener('click', () => {
+    stepTimeline(1);
+    });
+  }
+
+  if (playBtn) {
+    playBtn.addEventListener('click', () => {
+    if (timelinePlaybackTimer !== null) {
+      stopTimelinePlayback();
+      return;
+    }
+
+    updatePlaybackUi(true);
     const min = parseInt(slider.min, 10);
     const max = parseInt(slider.max, 10);
-
-    for (let year = min; year <= max; year++) {
-      slider.value = year;
-      applyTimeline(year, { animateLocations: true });
-      await new Promise(res => setTimeout(res, 400));
+    if (currentTimelineYear() >= max) {
+      setTimelineYear(min, { animateLocations: true });
     }
-  });
+
+    timelinePlaybackTimer = setInterval(() => {
+      const currentYear = currentTimelineYear();
+      const nextYear = currentYear + 1;
+
+      if (nextYear > max) {
+        stopTimelinePlayback();
+        return;
+      }
+
+      stepTimeline(1, { stopPlayback: false, animateLocations: true });
+
+      if (nextYear >= max) {
+        stopTimelinePlayback();
+      }
+    }, 420);
+    });
+  }
 
   // Clustering
   const runClusteringBtn = document.getElementById('runClustering');

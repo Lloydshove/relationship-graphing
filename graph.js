@@ -753,6 +753,7 @@ async function loadGraph() {
   const stepBackBtn = document.getElementById('timelineStepBack');
   const stepForwardBtn = document.getElementById('timelineStepForward');
   let resizeTimer;
+  let sliderInputTimer = null;
   let timelinePlaybackTimer = null;
 
   function updateVisibleYear(year) {
@@ -847,6 +848,21 @@ async function loadGraph() {
 
   slider.addEventListener('input', () => {
     stopTimelinePlayback();
+    updateVisibleYear(currentTimelineYear());
+    if (sliderInputTimer !== null) {
+      clearTimeout(sliderInputTimer);
+    }
+    sliderInputTimer = setTimeout(() => {
+      sliderInputTimer = null;
+      applyTimeline(currentTimelineYear());
+    }, 90);
+  });
+
+  slider.addEventListener('change', () => {
+    if (sliderInputTimer !== null) {
+      clearTimeout(sliderInputTimer);
+      sliderInputTimer = null;
+    }
     applyTimeline(currentTimelineYear());
   });
 

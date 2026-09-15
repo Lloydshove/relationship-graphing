@@ -872,17 +872,11 @@ async function loadGraph() {
     updatePlaybackUi(true);
     const min = parseInt(slider.min, 10);
     const max = parseInt(slider.max, 10);
-    let holdFirstFrame = false;
     if (currentTimelineYear() >= max) {
       setTimelineYear(min, { animateLocations: true });
-      holdFirstFrame = true;
     }
 
     timelinePlaybackTimer = setInterval(() => {
-      if (holdFirstFrame) {
-        holdFirstFrame = false;
-        return;
-      }
       const currentYear = currentTimelineYear();
       if (currentYear >= max) {
         stopTimelinePlayback();

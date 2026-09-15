@@ -648,6 +648,7 @@ async function loadGraph() {
   // Drawer toggle
   const drawer = document.getElementById('drawer');
   const drawerToggle = document.getElementById('drawerToggle');
+  const drawerClose = document.getElementById('drawerClose');
   const familyGroupingToggle = document.getElementById('familyGroupingToggle');
   const advancedControlsToggle = document.getElementById('toggleAdvancedControls');
 
@@ -677,6 +678,10 @@ async function loadGraph() {
 
   function closeDrawer() {
     drawer.classList.remove('open');
+  }
+
+  if (drawerClose) {
+    drawerClose.addEventListener('click', closeDrawer);
   }
 
   function setFamilyGrouping(enabled) {
@@ -795,8 +800,6 @@ async function loadGraph() {
   }
 
   slider.addEventListener('input', () => {
-    const clearDecadeBtn = document.getElementById('clearDecade');
-    if (clearDecadeBtn) clearDecadeBtn.click(); // auto-clear decade filter
     applyTimeline(currentTimelineYear());
     closeDrawer();
   });
@@ -805,8 +808,6 @@ async function loadGraph() {
   const playBtn = document.getElementById('playTimeline');
 
   playBtn.addEventListener('click', async () => {
-    const clearDecadeBtn = document.getElementById('clearDecade');
-    if (clearDecadeBtn) clearDecadeBtn.click(); // auto-clear decade filter
     closeDrawer();
 
     const min = parseInt(slider.min, 10);
@@ -817,52 +818,6 @@ async function loadGraph() {
       applyTimeline(year, { animateLocations: true });
       await new Promise(res => setTimeout(res, 400));
     }
-  });
-
-  // Decade filtering
-  function applyDecadeFilter(decadeStart) {
-    const decadeEnd = decadeStart + 9;
-
-    cy.edges().forEach(e => {
-      const y = e.data('year');
-
-      if (y !== null && y >= decadeStart && y <= decadeEnd) {
-        e.style('display', 'element');
-      } else {
-        e.style('display', 'none');
-      }
-    });
-
-    // Pulse nodes connected to visible edges
-    cy.edges().forEach(e => {
-      const y = e.data('year');
-      if (y !== null && y >= decadeStart && y <= decadeEnd) {
-        const src = cy.getElementById(e.data('source'));
-        const tgt = cy.getElementById(e.data('target'));
-
-        src.addClass('node-pulse');
-        tgt.addClass('node-pulse');
-
-        setTimeout(() => {
-          src.removeClass('node-pulse');
-          tgt.removeClass('node-pulse');
-        }, 600);
-      }
-    });
-  }
-
-  document.querySelectorAll('.decade-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const decade = parseInt(btn.dataset.decade, 10);
-      applyDecadeFilter(decade);
-      closeDrawer();
-    });
-  });
-
-  const clearDecade = document.getElementById('clearDecade');
-  clearDecade.addEventListener('click', () => {
-    cy.edges().forEach(e => e.style('display', 'element'));
-    closeDrawer();
   });
 
   // Clustering

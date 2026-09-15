@@ -14,7 +14,7 @@ No implementation starts for any feature until design is reviewed and approved b
 
 - Static client-side app (`index.html`, `styles.css`, `graph.js`) with Cytoscape rendering.
 - Data source is `data/relationships.json` with people, relationship types, and relationships.
-- Existing UX includes filters, timeline, decade filtering, clustering, and theme toggle.
+- Existing UX includes filters, timeline, clustering, and theme toggle.
 - Current model is edge-centric and must evolve to support time-aware overlapping groups.
 
 ---

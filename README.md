@@ -49,7 +49,6 @@ The graph models:
 - Timeline slider and animation playback
 - Country grouping with timeline-based location movement
 - Responsive country layout (desktop side-by-side, mobile portrait stacked)
-- Decade filtering
 - Louvain community clustering
 - Mobile-first control simplification with expandable advanced controls
 - Light/dark theme toggle

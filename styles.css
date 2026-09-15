@@ -4,6 +4,12 @@ body {
   font-family: Arial, sans-serif;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 header {
   display: flex;
   justify-content: space-between;
@@ -48,6 +54,7 @@ header {
   position: fixed;
   bottom: -70%;
   left: 0;
+  right: 0;
   width: 100%;
   height: 70%;
   background: #fff;
@@ -56,6 +63,7 @@ header {
   transition: bottom 0.35s ease;
   overflow-y: auto;
   padding: 10px 20px;
+  z-index: 20;
 }
 
 #drawer.open {
@@ -77,6 +85,28 @@ body.mobile-portrait #drawer.open {
   background: #ccc;
   border-radius: 3px;
   margin: 10px auto;
+}
+
+.drawer-topbar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: env(safe-area-inset-top, 0);
+  background: inherit;
+  z-index: 1;
+}
+
+#drawerClose {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: #e5e7eb;
+  color: #111827;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .drawer-section {
@@ -139,23 +169,6 @@ body.mobile-portrait .advanced-only {
 
 body.mobile-portrait #drawer.show-advanced .advanced-only {
   display: block;
-}
-
-/* Decade buttons */
-.decade-btn {
-  display: block;
-  width: 100%;
-  margin-bottom: 6px;
-  padding: 10px;
-  background: #eee;
-  border: none;
-  border-radius: 6px;
-  text-align: left;
-  cursor: pointer;
-}
-
-.decade-btn:hover {
-  background: #ddd;
 }
 
 /* Timeline slider */
@@ -245,6 +258,11 @@ body.dark #drawerToggle {
 body.dark .secondary-toggle {
   background: #1d4ed8;
   color: #eff6ff;
+}
+
+body.dark #drawerClose {
+  background: #374151;
+  color: #f9fafb;
 }
 
 @media (min-width: 901px) {

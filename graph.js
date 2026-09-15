@@ -878,11 +878,18 @@ async function loadGraph() {
 
     timelinePlaybackTimer = setInterval(() => {
       const currentYear = currentTimelineYear();
-      if (currentYear >= max) {
+      const nextYear = currentYear + 1;
+
+      if (nextYear > max) {
         stopTimelinePlayback();
         return;
       }
+
       stepTimeline(1, { stopPlayback: false, animateLocations: true });
+
+      if (nextYear >= max) {
+        stopTimelinePlayback();
+      }
     }, 420);
     });
   }

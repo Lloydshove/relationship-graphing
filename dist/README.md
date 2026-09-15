@@ -47,8 +47,10 @@ The graph models:
 - Interactive network graph rendering
 - Relationship type and context filters
 - Timeline slider and animation playback
-- Decade filtering
+- Country grouping with timeline-based location movement
+- Responsive country layout (desktop side-by-side, mobile portrait stacked)
 - Louvain community clustering
+- Mobile-first control simplification with expandable advanced controls
 - Light/dark theme toggle
 
 ## Build Pipeline
@@ -73,5 +75,6 @@ Live site URL:
 - IDs use stable prefixes: `pX` (people), `rtX` (relationship types), `rX` (relationships).
 - `year` may be `null` when unknown.
 - `context` and `mediator` are optional fields on relationships.
+- `locationHistory` on people defines country changes over time using `startYear`.
 
 For full schema details, see [schema.md](./schema.md).

@@ -757,7 +757,7 @@ async function loadGraph() {
   let timelinePlaybackTimer = null;
 
   function updateVisibleYear(year) {
-    yearLabel.textContent = `Showing relationships up to: ${year}`;
+    yearLabel.textContent = String(year);
     if (yearBadge) yearBadge.textContent = `Year: ${year}`;
   }
 
@@ -767,7 +767,7 @@ async function loadGraph() {
 
   function updatePlaybackUi(isPlaying) {
     if (!playBtn) return;
-    playBtn.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
+    playBtn.textContent = isPlaying ? '⏸' : '▶';
     playBtn.setAttribute('aria-label', isPlaying ? 'Pause timeline' : 'Play timeline');
     playBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
   }
@@ -936,10 +936,12 @@ async function loadGraph() {
 
   // Theme toggle
   const themeToggle = document.getElementById('themeToggle');
-  themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-    document.body.classList.toggle('light');
-  });
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      document.body.classList.toggle('light');
+    });
+  }
 
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);

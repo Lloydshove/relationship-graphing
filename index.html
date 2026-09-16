@@ -11,20 +11,19 @@
 
 <body class="light">
   <header>
-    <h1>Relationship Graph</h1>
-    <button id="themeToggle">Toggle theme</button>
+    <h1>HK Crew Relationship Tracker</h1>
   </header>
 
   <div id="currentYearBadge" aria-live="polite">Year: 2018</div>
   <section id="timelinePanel" aria-label="Timeline controls">
-    <h2>Timeline</h2>
-    <label id="yearSliderLabel" for="yearSlider">Select year</label>
+    <h2>🕒</h2>
+    <label id="yearSliderLabel" for="yearSlider">Year</label>
     <input type="range" id="yearSlider" min="1980" max="2026" value="2018">
-    <div id="yearLabel">Showing relationships up to: 2018</div>
+    <div id="yearLabel">2018</div>
     <div class="timeline-controls">
-      <button id="timelineStepBack" class="timeline-control-btn" type="button" aria-label="Step backward one year">⏮ Step back</button>
-      <button id="playTimeline" class="timeline-control-btn timeline-play-btn" type="button" aria-label="Play timeline" aria-pressed="false">▶ Play</button>
-      <button id="timelineStepForward" class="timeline-control-btn" type="button" aria-label="Step forward one year">Step forward ⏭</button>
+      <button id="timelineStepBack" class="timeline-control-btn" type="button" aria-label="Step backward one year">⏮</button>
+      <button id="playTimeline" class="timeline-control-btn timeline-play-btn" type="button" aria-label="Play timeline" aria-pressed="false">▶</button>
+      <button id="timelineStepForward" class="timeline-control-btn" type="button" aria-label="Step forward one year">⏭</button>
     </div>
   </section>
   <div id="cy"></div>

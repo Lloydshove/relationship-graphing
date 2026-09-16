@@ -748,8 +748,12 @@ async function loadGraph() {
   // Timeline slider
   const slider = document.getElementById('yearSlider');
   const yearLabel = document.getElementById('yearLabel');
+  const yearLabelVisible = document.getElementById('yearLabelVisible');
+  const yearLabelScreenReader = document.getElementById('yearLabelScreenReader');
   const yearBadge = document.getElementById('currentYearBadge');
   const playBtn = document.getElementById('playTimeline');
+  const playBtnIcon = playBtn ? playBtn.querySelector('.timeline-btn-icon') : null;
+  const playBtnText = playBtn ? playBtn.querySelector('.timeline-btn-text') : null;
   const stepBackBtn = document.getElementById('timelineStepBack');
   const stepForwardBtn = document.getElementById('timelineStepForward');
   let resizeTimer;
@@ -757,7 +761,11 @@ async function loadGraph() {
   let timelinePlaybackTimer = null;
 
   function updateVisibleYear(year) {
-    yearLabel.textContent = `Showing relationships up to: ${year}`;
+    if (yearLabelVisible) yearLabelVisible.textContent = String(year);
+    if (yearLabelScreenReader) yearLabelScreenReader.textContent = String(year);
+    if (!yearLabelVisible && !yearLabelScreenReader && yearLabel) {
+      yearLabel.textContent = `Showing relationships up to: ${year}`;
+    }
     if (yearBadge) yearBadge.textContent = `Year: ${year}`;
   }
 
@@ -767,7 +775,12 @@ async function loadGraph() {
 
   function updatePlaybackUi(isPlaying) {
     if (!playBtn) return;
-    playBtn.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
+    if (playBtnIcon && playBtnText) {
+      playBtnIcon.textContent = isPlaying ? '⏸' : '▶';
+      playBtnText.textContent = isPlaying ? 'Pause' : 'Play';
+    } else {
+      playBtn.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
+    }
     playBtn.setAttribute('aria-label', isPlaying ? 'Pause timeline' : 'Play timeline');
     playBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
   }
@@ -936,10 +949,12 @@ async function loadGraph() {
 
   // Theme toggle
   const themeToggle = document.getElementById('themeToggle');
-  themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-    document.body.classList.toggle('light');
-  });
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      document.body.classList.toggle('light');
+    });
+  }
 
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);

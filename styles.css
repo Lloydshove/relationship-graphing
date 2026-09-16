@@ -37,6 +37,7 @@ header h1 {
 #cy {
   width: 100%;
   height: calc(100vh - 40px);
+  height: calc(100dvh - 40px);
   position: relative;
 }
 
@@ -71,8 +72,11 @@ header h1 {
 
 #timelinePanel h2 {
   margin: 0;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 #yearSliderLabel {

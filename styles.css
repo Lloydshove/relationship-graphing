@@ -95,13 +95,27 @@ header h1 {
 .timeline-control-btn {
   border: none;
   border-radius: 7px;
-  height: 30px;
+  min-height: 34px;
   padding: 0;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: #111827;
   background: #e5e7eb;
   cursor: pointer;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+}
+
+.timeline-btn-icon {
+  line-height: 1;
+}
+
+.timeline-btn-text {
+  font-size: 10px;
+  line-height: 1;
 }
 
 .timeline-control-btn:hover {

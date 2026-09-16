@@ -750,6 +750,8 @@ async function loadGraph() {
   const yearLabel = document.getElementById('yearLabel');
   const yearBadge = document.getElementById('currentYearBadge');
   const playBtn = document.getElementById('playTimeline');
+  const playBtnIcon = playBtn ? playBtn.querySelector('.timeline-btn-icon') : null;
+  const playBtnText = playBtn ? playBtn.querySelector('.timeline-btn-text') : null;
   const stepBackBtn = document.getElementById('timelineStepBack');
   const stepForwardBtn = document.getElementById('timelineStepForward');
   let resizeTimer;
@@ -767,7 +769,8 @@ async function loadGraph() {
 
   function updatePlaybackUi(isPlaying) {
     if (!playBtn) return;
-    playBtn.textContent = isPlaying ? '⏸' : '▶';
+    if (playBtnIcon) playBtnIcon.textContent = isPlaying ? '⏸' : '▶';
+    if (playBtnText) playBtnText.textContent = isPlaying ? 'Pause' : 'Play';
     playBtn.setAttribute('aria-label', isPlaying ? 'Pause timeline' : 'Play timeline');
     playBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
   }

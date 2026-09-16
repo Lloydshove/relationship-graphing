@@ -775,8 +775,12 @@ async function loadGraph() {
 
   function updatePlaybackUi(isPlaying) {
     if (!playBtn) return;
-    if (playBtnIcon) playBtnIcon.textContent = isPlaying ? '⏸' : '▶';
-    if (playBtnText) playBtnText.textContent = isPlaying ? 'Pause' : 'Play';
+    if (playBtnIcon && playBtnText) {
+      playBtnIcon.textContent = isPlaying ? '⏸' : '▶';
+      playBtnText.textContent = isPlaying ? 'Pause' : 'Play';
+    } else {
+      playBtn.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
+    }
     playBtn.setAttribute('aria-label', isPlaying ? 'Pause timeline' : 'Play timeline');
     playBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
   }

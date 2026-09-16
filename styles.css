@@ -407,9 +407,9 @@ body.dark .timeline-play-btn:hover {
 
 @media (max-width: 900px) {
   #currentYearBadge {
-    top: 178px;
-    right: 12px;
-    left: auto;
+    top: 50px;
+    left: 12px;
+    right: auto;
     transform: none;
   }
 
@@ -418,7 +418,7 @@ body.dark .timeline-play-btn:hover {
     right: 12px;
     left: auto;
     transform: none;
-    width: min(230px, calc(100vw - 24px));
+    width: min(210px, calc(100vw - 24px));
     padding: 8px 10px;
   }
 }

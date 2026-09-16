@@ -748,6 +748,8 @@ async function loadGraph() {
   // Timeline slider
   const slider = document.getElementById('yearSlider');
   const yearLabel = document.getElementById('yearLabel');
+  const yearLabelVisible = document.getElementById('yearLabelVisible');
+  const yearLabelScreenReader = document.getElementById('yearLabelScreenReader');
   const yearBadge = document.getElementById('currentYearBadge');
   const playBtn = document.getElementById('playTimeline');
   const playBtnIcon = playBtn ? playBtn.querySelector('.timeline-btn-icon') : null;
@@ -759,7 +761,11 @@ async function loadGraph() {
   let timelinePlaybackTimer = null;
 
   function updateVisibleYear(year) {
-    yearLabel.innerHTML = `<span class="sr-only">Showing relationships up to: </span><span aria-hidden="true">${year}</span>`;
+    if (yearLabelVisible) yearLabelVisible.textContent = String(year);
+    if (yearLabelScreenReader) yearLabelScreenReader.textContent = String(year);
+    if (!yearLabelVisible && !yearLabelScreenReader && yearLabel) {
+      yearLabel.textContent = `Showing relationships up to: ${year}`;
+    }
     if (yearBadge) yearBadge.textContent = `Year: ${year}`;
   }
 

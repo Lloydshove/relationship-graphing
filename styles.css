@@ -407,18 +407,15 @@ body.dark .timeline-play-btn:hover {
 
 @media (max-width: 900px) {
   #currentYearBadge {
-    top: 50px;
-    left: 12px;
-    right: auto;
-    transform: none;
+    display: none;
   }
 
   #timelinePanel {
     top: 46px;
     right: 12px;
-    left: auto;
+    left: 12px;
     transform: none;
-    width: min(210px, calc(100vw - 24px));
+    width: auto;
     padding: 8px 10px;
   }
 }

@@ -759,8 +759,7 @@ async function loadGraph() {
   let timelinePlaybackTimer = null;
 
   function updateVisibleYear(year) {
-    yearLabel.textContent = String(year);
-    yearLabel.setAttribute('aria-label', `Showing relationships up to: ${year}`);
+    yearLabel.innerHTML = `<span class="sr-only">Showing relationships up to: </span><span aria-hidden="true">${year}</span>`;
     if (yearBadge) yearBadge.textContent = `Year: ${year}`;
   }
 

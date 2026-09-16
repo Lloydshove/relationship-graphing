@@ -19,7 +19,7 @@
     <h2><span aria-hidden="true">🕒</span> Timeline</h2>
     <label id="yearSliderLabel" for="yearSlider">Year</label>
     <input type="range" id="yearSlider" min="1980" max="2026" value="2018">
-    <div id="yearLabel">2018</div>
+    <div id="yearLabel" aria-live="polite"><span class="sr-only">Showing relationships up to: </span><span aria-hidden="true">2018</span></div>
     <div class="timeline-controls">
       <button id="timelineStepBack" class="timeline-control-btn" type="button" aria-label="Step backward one year"><span class="timeline-btn-icon" aria-hidden="true">⏮</span><span class="timeline-btn-text">Back</span></button>
       <button id="playTimeline" class="timeline-control-btn timeline-play-btn" type="button" aria-label="Play timeline" aria-pressed="false"><span class="timeline-btn-icon" aria-hidden="true">▶</span><span class="timeline-btn-text">Play</span></button>

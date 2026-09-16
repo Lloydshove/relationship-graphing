@@ -406,6 +406,12 @@ body.dark .timeline-play-btn:hover {
 }
 
 @media (max-width: 900px) {
+  #cy {
+    margin-top: 126px;
+    height: calc(100vh - var(--header-height) - 126px);
+    height: calc(100dvh - var(--header-height) - 126px);
+  }
+
   #currentYearBadge {
     width: 1px;
     height: 1px;

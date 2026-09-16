@@ -760,6 +760,7 @@ async function loadGraph() {
 
   function updateVisibleYear(year) {
     yearLabel.textContent = String(year);
+    yearLabel.setAttribute('aria-label', `Showing relationships up to: ${year}`);
     if (yearBadge) yearBadge.textContent = `Year: ${year}`;
   }
 

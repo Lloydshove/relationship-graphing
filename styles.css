@@ -408,18 +408,20 @@ body.dark .timeline-play-btn:hover {
 
 @media (max-width: 900px) {
   #cy {
-    margin-top: var(--mobile-timeline-space);
-    height: calc(100vh - var(--header-height) - var(--mobile-timeline-space));
-    height: calc(100dvh - var(--header-height) - var(--mobile-timeline-space));
+    padding-top: var(--mobile-timeline-space);
+    height: calc(100vh - var(--header-height));
+    height: calc(100dvh - var(--header-height));
   }
 
   #currentYearBadge {
+    position: absolute;
     width: 1px;
     height: 1px;
     padding: 0;
     margin: -1px;
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
     white-space: nowrap;
     border: 0;
   }

@@ -6,6 +6,7 @@ body {
 
 :root {
   --header-height: 44px;
+  --mobile-timeline-space: 126px;
 }
 
 *,
@@ -407,9 +408,9 @@ body.dark .timeline-play-btn:hover {
 
 @media (max-width: 900px) {
   #cy {
-    margin-top: 126px;
-    height: calc(100vh - var(--header-height) - 126px);
-    height: calc(100dvh - var(--header-height) - 126px);
+    margin-top: var(--mobile-timeline-space);
+    height: calc(100vh - var(--header-height) - var(--mobile-timeline-space));
+    height: calc(100dvh - var(--header-height) - var(--mobile-timeline-space));
   }
 
   #currentYearBadge {
